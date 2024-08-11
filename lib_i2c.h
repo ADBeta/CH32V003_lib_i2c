@@ -43,6 +43,7 @@ typedef enum {
 /// @breif Checks the I2C Status against a mask value, returns 1 if it matches
 /// @param Status To match to
 /// @return uint32_t masked status value - 1 if mask and status match
+__attribute__((always_inline))
 static inline uint32_t i2c_status(const uint32_t status_mask)
 {
 	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
