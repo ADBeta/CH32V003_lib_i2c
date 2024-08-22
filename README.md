@@ -1,5 +1,5 @@
 # CH32V003_lib_i2c
-**This is a simplified library for I2C, used with [ch32v003_fun](https://github.com/cnlohr/ch32v003fun)**
+**This is a simplified library for I2C, used with [ch32v003fun](https://github.com/cnlohr/ch32v003fun)**
 
 ## Library Description
 This Library provides a hardware peripheral I2C interface, with the following features:

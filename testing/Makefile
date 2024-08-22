@@ -3,7 +3,7 @@ TOOLKIT_DIR  := ../toolkit
 EXTRALIB_DIR := $(TOOLKIT_DIR)/extralibs
 
 # Project name
-TARGET := i2ctest
+TARGET := i2c-test
 
 LIB_SRC := ../lib_i2c.c
 

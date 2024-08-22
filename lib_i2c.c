@@ -1,14 +1,33 @@
 /******************************************************************************
-* Simplified CH32V000x I2C Library.
-* Only supports 8-Bit addresses and 8-Bit registers. 
+* Lightweight and simple CH32V0003 I2C Library.
 *
-* Has simple to use functions for detection, reading and writing of I2C Devices
-* SCL = PC2 
-* SDA = PC1
+* This library provides functions to init, read and write to the hardware I2C
+* Bus - in Default, and Alternative Pinout Modes.
+* Default:		SCL = PC2		SDA = PC1
+* Alternative:	SCL = P			SDA = P
 *
-* See original GitHub Repo here: https://github.com/ADBeta/CH32V000x-lib_i2c
+* See GitHub Repo for more information: 
+* https://github.com/ADBeta/CH32V000x-lib_i2c
 *
-* ADBeta (c) 2024    Ver 1.0.0    18 May
+* Released under the MIT Licence
+* Copyright ADBeta (c) 2024
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to
+* deal in the Software without restriction, including without limitation the 
+* rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+* sell copies of the Software, and to permit persons to whom the Software is 
+* furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in 
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+* DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
+* OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE 
+* USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 #include "lib_i2c.h"
 #include <stdio.h>
@@ -16,10 +35,15 @@
 /*** API Functions ***********************************************************/
 i2c_err_t i2c_init(uint32_t clk_rate)
 {
-	// Enable the Peripheral Clock to access I2C Registers
-	RCC->APB2PCENR |= I2C_PORT_RCC | RCC_APB2Periph_AFIO;
+	// Enable the I2C Peripheral Clock
 	RCC->APB1PCENR |= RCC_APB1Periph_I2C1;
-	// Clear, then set the GPIO Settings for SCL and SDA
+
+
+	// TODO: set i2c port on, change afio if needed
+	// R32_AFIO_PCFR1
+	RCC->APB2PCENR |= I2C_PORT_RCC | RCC_APB2Periph_AFIO;
+
+	// Clear, then set the GPIO Settings for SCL and SDA, on the selected port
 	I2C_PORT->CFGLR &= ~(0x0F<<(4*I2C_PIN_SDA));
 	I2C_PORT->CFGLR |= (GPIO_Speed_10MHz | GPIO_CNF_OUT_OD_AF)<<(4*I2C_PIN_SDA);	
 	I2C_PORT->CFGLR &= ~(0x0F<<(4*I2C_PIN_SCL));
@@ -29,12 +53,12 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 	RCC->APB1PRSTR |=  RCC_APB1Periph_I2C1;
 	RCC->APB1PRSTR &= ~RCC_APB1Periph_I2C1;
 
-	// Set the Config2 Register Frequency
+	// Set the Prerate frequency
 	uint16_t i2c_conf = I2C1->CTLR2 & ~I2C_CTLR2_FREQ;
 	i2c_conf |= (FUNCONF_SYSTEM_CORE_CLOCK / I2C_PRERATE) & I2C_CTLR2_FREQ;
 	I2C1->CTLR2 = i2c_conf;
 
-	// Set I2C Clock Register
+	// Set I2C Clock
 	if(clk_rate <= 100000)
 	{
 		i2c_conf = (FUNCONF_SYSTEM_CORE_CLOCK / (2*clk_rate)) & I2C_CKCFGR_CCR;
@@ -45,9 +69,10 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 	}
 	I2C1->CKCFGR = i2c_conf;
 
-	// Finally enable the I2C Peripheral
+	// Enable the I2C Peripheral
 	I2C1->CTLR1 |= I2C_CTLR1_PE;
 
+	// TODO: Get error states before this
 	return I2C_OK;
 }
 
@@ -66,7 +91,7 @@ i2c_err_t i2c_ping(const uint8_t addr)
 
 	// Send the Address and wait for it to finish transmitting
 	timeout = I2C_TIMEOUT;
-	I2C1->DATAR = addr & 0xFE;
+	I2C1->DATAR = (addr << 1) & 0xFE;
 	while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {
 		if(--timeout < 0) { ret_sta = I2C_ERR_NACK; break; }
 	}
@@ -91,9 +116,9 @@ void i2c_scan(void)
 }
 
 
-i2c_err_t i2c_read(const uint8_t addr,         const uint8_t reg,
-				                                     uint8_t *buf,
-                                               const uint8_t len)
+i2c_err_t i2c_read(const uint8_t addr,    const uint8_t reg,
+				                          uint8_t *buf,
+                                          const uint8_t len)
 {
 	// Wait for the bus to become not busy - return I2C_ERR_TIMEOUT on failure
 	int32_t timeout = I2C_TIMEOUT;
@@ -105,7 +130,7 @@ i2c_err_t i2c_read(const uint8_t addr,         const uint8_t reg,
 
 	// Send the Address and wait for it to finish transmitting
 	timeout = I2C_TIMEOUT;
-	I2C1->DATAR = addr & 0xFE;
+	I2C1->DATAR = (addr << 1) & 0xFE;
 	while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {
 		if(--timeout < 0) return I2C_ERR_NACK;
 	}
@@ -123,7 +148,7 @@ i2c_err_t i2c_read(const uint8_t addr,         const uint8_t reg,
 
 	// Send Read Address
 	timeout = I2C_TIMEOUT;
-	I2C1->DATAR = addr | 0x01;
+	I2C1->DATAR = (addr << 1) | 0x01;
 	while(!i2c_status(I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)) {
 		if(--timeout < 0) return I2C_ERR_NACK;
 	}
@@ -149,9 +174,9 @@ i2c_err_t i2c_read(const uint8_t addr,         const uint8_t reg,
 }
 
 
-i2c_err_t i2c_write(const uint8_t addr,        const uint8_t reg,
-					                           const uint8_t *buf,
-                                               const uint8_t len)
+i2c_err_t i2c_write(const uint8_t addr,    const uint8_t reg,
+					                       const uint8_t *buf,
+                                           const uint8_t len)
 {
 	// Wait for the bus to become not busy - return I2C_ERR_TIMEOUT on failure
 	int32_t timeout = I2C_TIMEOUT;
@@ -163,7 +188,7 @@ i2c_err_t i2c_write(const uint8_t addr,        const uint8_t reg,
 
 	// Send the Write Address and wait for it to finish transmitting
 	timeout = I2C_TIMEOUT;
-	I2C1->DATAR = addr & 0xFE;
+	I2C1->DATAR = (addr << 1) & 0xFE;
 	while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {
 		if(--timeout < 0) return I2C_ERR_NACK;
 	}
