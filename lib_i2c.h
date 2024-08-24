@@ -3,8 +3,9 @@
 *
 * This library provides functions to init, read and write to the hardware I2C
 * Bus - in Default, and Alternative Pinout Modes.
-* Default:		SCL = PC2		SDA = PC1
-* Alternative:	SCL = P			SDA = P
+* Default:	SCL = PC2		SDA = PC1
+* Alt 1:	SCL = PD1		SDA = PD0
+* Alt 2:	SCL = PC5		SDA = PC6
 *
 * See GitHub Repo for more information: 
 * https://github.com/ADBeta/CH32V000x-lib_i2c
@@ -24,7 +25,9 @@
 * all copies or substantial portions of the Software.
 *
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+* EXPRESS OR IMPLIED, INCLUDING BUT N00: default mapping (SCL/PC2, SDA/PC1).
+01: Remapping (SCL/ PD1, SDA/ PD0).
+1X: Remapping (SCL/PC5, SDA/PC6)OT LIMITED TO THE WARRANTIES OF 
 * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
@@ -34,7 +37,16 @@
 #ifndef CH32_LIB_I2C_H
 #define CH32_LIB_I2C_H
 
+// TODO: Assess why the I2C Bus halts and doesn't recover from pins being 
+// swapped (look at the registers in real-time)
+
+
 #include "ch32v003fun.h"
+
+// TESTED: DEFAULT OK    ALT_1 OK    
+#define I2C_PINOUT_DEFAULT
+//#define I2C_PINOUT_ALT_1
+//#define I2C_PINOUT_ALT_2
 
 /*** Hardware Definitions ****************************************************/
 // Common Clock Speeds
@@ -42,22 +54,43 @@
 #define I2C_CLK_100KHZ 100000
 
 // Hardware CLK Prerate and timeout
-#define I2C_PRERATE 2000000
+#define I2C_PRERATE 2000000  // NOTE: test is actually correct?
 #define I2C_TIMEOUT 2000
 
-// Default PORT Configuration
-#define I2C_PORT_RCC	RCC_APB2Periph_GPIOC
-#define I2C_PORT		GPIOC 
-#define I2C_PIN_SCL 	2
-#define I2C_PIN_SDA 	1
+// Default Pinout
+#ifdef I2C_PINOUT_DEFAULT
+	#define I2C_AFIO_REG    ((uint32_t)0x00000000)
+	#define I2C_PORT_RCC	RCC_APB2Periph_GPIOC
+	#define I2C_PORT		GPIOC
+	#define I2C_PIN_SCL 	2
+	#define I2C_PIN_SDA 	1
+#endif
+
+// Alternate 1 Pinout
+#ifdef I2C_PINOUT_ALT_1
+	#define I2C_AFIO_REG    ((uint32_t)0x04000002)
+	#define I2C_PORT_RCC	RCC_APB2Periph_GPIOD
+	#define I2C_PORT		GPIOD
+	#define I2C_PIN_SCL 	1
+	#define I2C_PIN_SDA 	0
+#endif
+
+// Alternate 2 Pinout
+#ifdef I2C_PINOUT_ALT_2
+	#define I2C_AFIO_REG    ((uint32_t)0x00400002)
+	#define I2C_PORT_RCC	RCC_APB2Periph_GPIOC
+	#define I2C_PORT		GPIOC
+	#define I2C_PIN_SCL 	5
+	#define I2C_PIN_SDA 	6
+#endif
 
 // Error Code Definitons
 typedef enum {
-	I2C_OK           = 0,
-	I2C_ERR_TIMEOUT  = 1,
-	I2C_ERR_NACK     = 2,
-	I2C_ERR_NO_DATA  = 3,
-
+	I2C_OK      = 0,  // No Error. All OK
+	I2C_ERR_TIMEOUT,  // Timeout happened when read/write
+	I2C_ERR_NACK,     // ACK Bit failed
+	I2C_ERR_BERR,     // Bus Error
+	I2C_ERR_ARLO,     // Arbitration Lost
 } i2c_err_t;
 
 /*** Static Functions ********************************************************/

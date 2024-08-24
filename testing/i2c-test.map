@@ -4,9 +4,9 @@ i2c-test.elf:     file format elf32-littleriscv
 SYMBOL TABLE:
 00000000 l    d  .init	00000000 .init
 000000a0 l    d  .text	00000000 .text
-00000a68 l    d  .fini	00000000 .fini
+00000a4c l    d  .fini	00000000 .fini
 20000000 l    d  .dalign	00000000 .dalign
-00000a68 l    d  .dlalign	00000000 .dlalign
+00000a4c l    d  .dlalign	00000000 .dlalign
 20000000 l    d  .data	00000000 .data
 20000000 l    d  .bss	00000000 .bss
 00000000 l    d  .riscv.attributes	00000000 .riscv.attributes
@@ -35,9 +35,9 @@ SYMBOL TABLE:
 000003fa g     F .text	0000000e NMI_Handler
 00000000 g     F .init	0000009c InterruptVectorDefault
 20000000 g       .bss	00000000 _sbss
+00002094  w      .debug_info	00000000 .hidden lib_i2c.c.7820ff9c
 00000606 g     F .text	0000001c memcpy
 00000000 g     F .init	0000009c InterruptVector
-00000622 g     F .text	0000002c puts
 000000a8 g     F .text	0000002c .hidden __hidden___udivsi3
 000000a8 g     F .text	0000002c .hidden __udivsi3
 000000a0 g       .init	00000000 _einit
@@ -54,27 +54,26 @@ SYMBOL TABLE:
 000003f8 g     F .text	00000002 RCC_IRQHandler
 000003f8 g     F .text	00000002 TIM1_TRG_COM_IRQHandler
 000003f8 g     F .text	00000002 DMA1_Channel1_IRQHandler
+00001e9a  w      .debug_info	00000000 .hidden i2c_test.c.15c39521
 000003f8 g     F .text	00000002 DefaultIRQHandler
 20000000 g       .dalign	00000000 _data_vma
 000003fa g     F .text	0000000e NMI_RCC_CSS_IRQHandler
-00001f95  w      .debug_info	00000000 .hidden i2c_test.c.502727c4
 000005f4 g     F .text	00000012 memset
-000006b0 g     F .text	0000035e main
+00000684 g     F .text	000003bc main
 000003f8 g     F .text	00000002 DMA1_Channel5_IRQHandler
 000000a0 g     F .text	00000058 .hidden __divsi3
-0000064e g     F .text	00000062 SystemInit
+00000622 g     F .text	00000062 SystemInit
 00000000 g       .init	00000000 _sinit
 000003f8 g     F .text	00000002 DMA1_Channel3_IRQHandler
 000003f8 g     F .text	00000002 TIM1_UP_IRQHandler
-000011bf  w      .debug_info	00000000 .hidden ch32v003fun.c.75419276
+000010c4  w      .debug_info	00000000 .hidden ch32v003fun.c.75419276
 000003f8 g     F .text	00000002 WWDG_IRQHandler
 000003f8 g     F .text	00000002 TIM2_IRQHandler
 20000800 g       .text	00000000 _eusrstack
 000003f8 g     F .text	00000002 SW_Handler
 000003f8 g     F .text	00000002 TIM1_BRK_IRQHandler
 20000000 g       .data	00000000 _edata
-00002191  w      .debug_info	00000000 .hidden lib_i2c.c.75227a69
-00000a68 g       .dlalign	00000000 _data_lma
+00000a4c g       .dlalign	00000000 _data_lma
 000000f8 g     F .text	00000024 .hidden __modsi3
 000003f8 g     F .text	00000002 DMA1_Channel2_IRQHandler
 0000037a g     F .text	0000007e handle_reset

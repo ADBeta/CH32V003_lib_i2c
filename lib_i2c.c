@@ -35,23 +35,26 @@
 /*** API Functions ***********************************************************/
 i2c_err_t i2c_init(uint32_t clk_rate)
 {
-	// Enable the I2C Peripheral Clock
-	RCC->APB1PCENR |= RCC_APB1Periph_I2C1;
-
-
-	// TODO: set i2c port on, change afio if needed
-	// R32_AFIO_PCFR1
-	RCC->APB2PCENR |= I2C_PORT_RCC | RCC_APB2Periph_AFIO;
-
-	// Clear, then set the GPIO Settings for SCL and SDA, on the selected port
-	I2C_PORT->CFGLR &= ~(0x0F<<(4*I2C_PIN_SDA));
-	I2C_PORT->CFGLR |= (GPIO_Speed_10MHz | GPIO_CNF_OUT_OD_AF)<<(4*I2C_PIN_SDA);	
-	I2C_PORT->CFGLR &= ~(0x0F<<(4*I2C_PIN_SCL));
-	I2C_PORT->CFGLR |= (GPIO_Speed_10MHz | GPIO_CNF_OUT_OD_AF)<<(4*I2C_PIN_SCL);
-
 	// Toggle the I2C Reset bit to init Registers
 	RCC->APB1PRSTR |=  RCC_APB1Periph_I2C1;
 	RCC->APB1PRSTR &= ~RCC_APB1Periph_I2C1;
+
+	// Enable the I2C Peripheral Clock
+	RCC->APB1PCENR |= RCC_APB1Periph_I2C1;
+
+	// Enable the selected I2C Port, and the Alternate Function enable bit
+	RCC->APB2PCENR |= I2C_PORT_RCC | RCC_APB2Periph_AFIO;
+
+	// Reset the AFIO_PCFR1 register, then set it up
+	AFIO->PCFR1 &= ~(0x04400002);
+	AFIO->PCFR1 |= I2C_AFIO_REG;
+
+	// Clear, then set the GPIO Settings for SCL and SDA, on the selected port
+	I2C_PORT->CFGLR &= ~(0x0F << (4 * I2C_PIN_SDA));
+	I2C_PORT->CFGLR |= (GPIO_Speed_10MHz | GPIO_CNF_OUT_OD_AF) << (4 * I2C_PIN_SDA);	
+	I2C_PORT->CFGLR &= ~(0x0F << (4 * I2C_PIN_SCL));
+	I2C_PORT->CFGLR |= (GPIO_Speed_10MHz | GPIO_CNF_OUT_OD_AF) << (4 * I2C_PIN_SCL);
+
 
 	// Set the Prerate frequency
 	uint16_t i2c_conf = I2C1->CTLR2 & ~I2C_CTLR2_FREQ;
@@ -61,10 +64,10 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 	// Set I2C Clock
 	if(clk_rate <= 100000)
 	{
-		i2c_conf = (FUNCONF_SYSTEM_CORE_CLOCK / (2*clk_rate)) & I2C_CKCFGR_CCR;
+		i2c_conf = (FUNCONF_SYSTEM_CORE_CLOCK / (2 * clk_rate)) & I2C_CKCFGR_CCR;
 	} else {
 		// Fast mode. Default to 33% Duty Cycle
-		i2c_conf = (FUNCONF_SYSTEM_CORE_CLOCK / (3*clk_rate)) & I2C_CKCFGR_CCR;
+		i2c_conf = (FUNCONF_SYSTEM_CORE_CLOCK / (3 * clk_rate)) & I2C_CKCFGR_CCR;
 		i2c_conf |= I2C_CKCFGR_FS;
 	}
 	I2C1->CKCFGR = i2c_conf;
@@ -72,7 +75,13 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 	// Enable the I2C Peripheral
 	I2C1->CTLR1 |= I2C_CTLR1_PE;
 
-	// TODO: Get error states before this
+	// Check error states
+	if(I2C1->STAR1 & I2C_STAR1_BERR) 
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_BERR); 
+		return I2C_ERR_BERR;
+	}
+
 	return I2C_OK;
 }
 
@@ -94,6 +103,25 @@ i2c_err_t i2c_ping(const uint8_t addr)
 	I2C1->DATAR = (addr << 1) & 0xFE;
 	while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {
 		if(--timeout < 0) { ret_sta = I2C_ERR_NACK; break; }
+	}
+
+	// Catch some errors
+	if(I2C1->STAR1 & I2C_STAR1_AF)
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_AF);
+		ret_sta = I2C_ERR_NACK;
+	}
+
+	if(I2C1->STAR1 & I2C_STAR1_BERR) 
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_BERR); 
+		ret_sta = I2C_ERR_BERR;
+	}
+
+	if(I2C1->STAR1 & I2C_STAR1_ARLO) 
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_ARLO); 
+		ret_sta = I2C_ERR_ARLO;
 	}
 
 	// Send the STOP Signal, return OK or NACK depending
@@ -167,10 +195,30 @@ i2c_err_t i2c_read(const uint8_t addr,    const uint8_t reg,
 		++cbyte;
 	}
 
+	// Catch some errors
+	i2c_err_t ret_sta = I2C_OK;
+	if(I2C1->STAR1 & I2C_STAR1_AF)
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_AF);
+		ret_sta = I2C_ERR_NACK;
+	}
+
+	if(I2C1->STAR1 & I2C_STAR1_BERR) 
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_BERR); 
+		ret_sta = I2C_ERR_BERR;
+	}
+
+	if(I2C1->STAR1 & I2C_STAR1_ARLO) 
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_ARLO); 
+		ret_sta = I2C_ERR_ARLO;
+	}
+
 	// Send the STOP Signal
 	I2C1->CTLR1 |= I2C_CTLR1_STOP;
 
-	return I2C_OK;
+	return ret_sta;
 }
 
 
@@ -212,5 +260,25 @@ i2c_err_t i2c_write(const uint8_t addr,    const uint8_t reg,
 	while(!i2c_status(I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 	I2C1->CTLR1 |= I2C_CTLR1_STOP;
 
-	return I2C_OK;
+	// Catch some errors
+	i2c_err_t ret_sta = I2C_OK;
+	if(I2C1->STAR1 & I2C_STAR1_AF)
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_AF);
+		ret_sta = I2C_ERR_NACK;
+	}
+
+	if(I2C1->STAR1 & I2C_STAR1_BERR) 
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_BERR); 
+		ret_sta = I2C_ERR_BERR;
+	}
+
+	if(I2C1->STAR1 & I2C_STAR1_ARLO) 
+	{
+		I2C1->STAR1 &= ~(I2C_STAR1_ARLO); 
+		ret_sta = I2C_ERR_ARLO;
+	}
+
+	return ret_sta;
 }
