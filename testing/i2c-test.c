@@ -39,7 +39,8 @@ int main()
 	while(1)
 	{
 		Delay_Ms(100);
-		i2c_read(0x68, 0x00, &secs, 1);
+		i2c_err_t i2c_stat = i2c_read(0x68, 0x00, &secs, 1);
+		if(i2c_stat != I2C_OK) printf("Fucked. Err %ld\n", (uint32_t)i2c_stat);
 		printf("secs: %2X\n", secs);
 	}
 

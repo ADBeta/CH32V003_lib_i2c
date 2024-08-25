@@ -262,7 +262,7 @@ Disassembly of section .text:
  2be:	00d65363          	bge	a2,a3,2c4 <_write.constprop.0+0x3e>
  2c2:	471d                	li	a4,7
  2c4:	00027637          	lui	a2,0x27
- 2c8:	10160613          	addi	a2,a2,257 # 27101 <lib_i2c.c.7820ff9c+0x2506d>
+ 2c8:	10160613          	addi	a2,a2,257 # 27101 <lib_i2c.c.948e1df1+0x24ffe>
  2cc:	00032583          	lw	a1,0(t1)
  2d0:	0805f513          	andi	a0,a1,128
  2d4:	ed3d                	bnez	a0,352 <_write.constprop.0+0xcc>
@@ -353,7 +353,7 @@ Disassembly of section .text:
  3b6:	0511                	addi	a0,a0,4
  3b8:	feb54ee3          	blt	a0,a1,3b4 <handle_reset+0x3a>
  3bc:	00000517          	auipc	a0,0x0
- 3c0:	69050513          	addi	a0,a0,1680 # a4c <_data_lma>
+ 3c0:	65850513          	addi	a0,a0,1624 # a14 <_data_lma>
  3c4:	20000597          	auipc	a1,0x20000
  3c8:	c3c58593          	addi	a1,a1,-964 # 20000000 <_data_vma>
  3cc:	20000617          	auipc	a2,0x20000
@@ -601,7 +601,7 @@ Disassembly of section .text:
  62a:	400217b7          	lui	a5,0x40021
  62e:	01080737          	lui	a4,0x1080
  632:	0007a223          	sw	zero,4(a5) # 40021004 <_eusrstack+0x20020804>
- 636:	08170713          	addi	a4,a4,129 # 1080081 <lib_i2c.c.7820ff9c+0x107dfed>
+ 636:	08170713          	addi	a4,a4,129 # 1080081 <lib_i2c.c.948e1df1+0x107df7e>
  63a:	c398                	sw	a4,0(a5)
  63c:	009f0737          	lui	a4,0x9f0
  640:	c798                	sw	a4,8(a5)
@@ -649,7 +649,7 @@ void DelaySysTick( uint32_t n )
  68e:	e000f7b7          	lui	a5,0xe000f
  692:	4798                	lw	a4,8(a5)
  694:	005b97b7          	lui	a5,0x5b9
- 698:	d8078793          	addi	a5,a5,-640 # 5b8d80 <lib_i2c.c.7820ff9c+0x5b6cec>
+ 698:	d8078793          	addi	a5,a5,-640 # 5b8d80 <lib_i2c.c.948e1df1+0x5b6c7d>
  69c:	973e                	add	a4,a4,a5
 	while( ((int32_t)( SysTick->CNT - targend )) < 0 );
  69e:	e000f6b7          	lui	a3,0xe000f
@@ -726,17 +726,16 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 	I2C_PORT->CFGLR |= (GPIO_Speed_10MHz | GPIO_CNF_OUT_OD_AF) << (4 * I2C_PIN_SCL);
  706:	4398                	lw	a4,0(a5)
  708:	6685                	lui	a3,0x1
- 70a:	d0068693          	addi	a3,a3,-768 # d00 <_data_lma+0x2b4>
+ 70a:	d0068693          	addi	a3,a3,-768 # d00 <_data_lma+0x2ec>
  70e:	8f55                	or	a4,a4,a3
  710:	c398                	sw	a4,0(a5)
-
 
 	// Set the Prerate frequency
 	uint16_t i2c_conf = I2C1->CTLR2 & ~I2C_CTLR2_FREQ;
  712:	400057b7          	lui	a5,0x40005
  716:	4047d703          	lhu	a4,1028(a5) # 40005404 <_eusrstack+0x20004c04>
  71a:	66c1                	lui	a3,0x10
- 71c:	fc068693          	addi	a3,a3,-64 # ffc0 <lib_i2c.c.7820ff9c+0xdf2c>
+ 71c:	fc068693          	addi	a3,a3,-64 # ffc0 <lib_i2c.c.948e1df1+0xdebd>
  720:	8f75                	and	a4,a4,a3
 	i2c_conf |= (FUNCONF_SYSTEM_CORE_CLOCK / I2C_PRERATE) & I2C_CTLR2_FREQ;
  722:	01876713          	ori	a4,a4,24
@@ -760,6 +759,7 @@ i2c_err_t i2c_init(uint32_t clk_rate)
  73a:	00176713          	ori	a4,a4,1
  73e:	00e79023          	sh	a4,0(a5)
 
+	//TODO:
 	// Check error states
 	if(I2C1->STAR1 & I2C_STAR1_BERR) 
  742:	0147d703          	lhu	a4,20(a5)
@@ -769,7 +769,7 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 		I2C1->STAR1 &= ~(I2C_STAR1_BERR); 
  74c:	0147d703          	lhu	a4,20(a5)
  750:	66c1                	lui	a3,0x10
- 752:	eff68693          	addi	a3,a3,-257 # feff <lib_i2c.c.7820ff9c+0xde6b>
+ 752:	eff68693          	addi	a3,a3,-257 # feff <lib_i2c.c.948e1df1+0xddfc>
  756:	8f75                	and	a4,a4,a3
  758:	00e79a23          	sh	a4,20(a5)
 					                       const uint8_t *buf,
@@ -777,356 +777,348 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 {
 	// Wait for the bus to become not busy - return I2C_ERR_TIMEOUT on failure
 	int32_t timeout = I2C_TIMEOUT;
-	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_TIMEOUT;
+	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_BUSY;
  75c:	400057b7          	lui	a5,0x40005
 {
  760:	7d100693          	li	a3,2001
  764:	40078793          	addi	a5,a5,1024 # 40005400 <_eusrstack+0x20004c00>
  768:	0187d703          	lhu	a4,24(a5)
  76c:	8b09                	andi	a4,a4,2
- 76e:	10071d63          	bnez	a4,888 <main+0x204>
+ 76e:	ef4d                	bnez	a4,828 <main+0x1a4>
 
 	// Send a START Signal and wait for it to assert
 	I2C1->CTLR1 |= I2C_CTLR1_START;
- 772:	0007d703          	lhu	a4,0(a5)
-/// @return uint32_t masked status value: 1 if mask and status match
-__attribute__((always_inline))
-static inline uint32_t i2c_status(const uint32_t status_mask)
-{
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
+ 770:	0007d703          	lhu	a4,0(a5)
 	return (status & status_mask) == status_mask; 
- 776:	000306b7          	lui	a3,0x30
- 77a:	0685                	addi	a3,a3,1 # 30001 <lib_i2c.c.7820ff9c+0x2df6d>
- 77c:	10076713          	ori	a4,a4,256
- 780:	00e79023          	sh	a4,0(a5)
+ 774:	000306b7          	lui	a3,0x30
+ 778:	0685                	addi	a3,a3,1 # 30001 <lib_i2c.c.948e1df1+0x2defe>
+	I2C1->CTLR1 |= I2C_CTLR1_START;
+ 77a:	10076713          	ori	a4,a4,256
+ 77e:	00e79023          	sh	a4,0(a5)
 	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 784:	40005737          	lui	a4,0x40005
- 788:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
- 78c:	01475603          	lhu	a2,20(a4)
- 790:	01875783          	lhu	a5,24(a4)
- 794:	07c2                	slli	a5,a5,0x10
- 796:	8fd1                	or	a5,a5,a2
+ 782:	40005737          	lui	a4,0x40005
+ 786:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
+ 78a:	01475603          	lhu	a2,20(a4)
+ 78e:	01875783          	lhu	a5,24(a4)
+ 792:	07c2                	slli	a5,a5,0x10
+ 794:	8fd1                	or	a5,a5,a2
 	return (status & status_mask) == status_mask; 
- 798:	8ff5                	and	a5,a5,a3
+ 796:	8ff5                	and	a5,a5,a3
 	while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
- 79a:	fed799e3          	bne	a5,a3,78c <main+0x108>
+ 798:	fed799e3          	bne	a5,a3,78a <main+0x106>
 
 	// Send the Write Address and wait for it to finish transmitting
 	timeout = I2C_TIMEOUT;
 	I2C1->DATAR = (addr << 1) & 0xFE;
- 79e:	0d000793          	li	a5,208
- 7a2:	00f71823          	sh	a5,16(a4)
- 7a6:	000706b7          	lui	a3,0x70
+ 79c:	0d000793          	li	a5,208
+ 7a0:	00f71823          	sh	a5,16(a4)
+	return (status & status_mask) == status_mask; 
+ 7a4:	000706b7          	lui	a3,0x70
 	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 7aa:	40005737          	lui	a4,0x40005
+ 7a8:	40005737          	lui	a4,0x40005
 	while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {
- 7ae:	7d100613          	li	a2,2001
- 7b2:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
-	return (status & status_mask) == status_mask; 
- 7b6:	08268693          	addi	a3,a3,130 # 70082 <lib_i2c.c.7820ff9c+0x6dfee>
+ 7ac:	7d100613          	li	a2,2001
 	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 7ba:	01475583          	lhu	a1,20(a4)
- 7be:	01875783          	lhu	a5,24(a4)
- 7c2:	07c2                	slli	a5,a5,0x10
- 7c4:	8fcd                	or	a5,a5,a1
+ 7b0:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
 	return (status & status_mask) == status_mask; 
- 7c6:	8ff5                	and	a5,a5,a3
- 7c8:	24d79963          	bne	a5,a3,a1a <main+0x396>
+ 7b4:	08268693          	addi	a3,a3,130 # 70082 <lib_i2c.c.948e1df1+0x6df7f>
+	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
+ 7b8:	01475583          	lhu	a1,20(a4)
+ 7bc:	01875783          	lhu	a5,24(a4)
+ 7c0:	07c2                	slli	a5,a5,0x10
+ 7c2:	8fcd                	or	a5,a5,a1
+	return (status & status_mask) == status_mask; 
+ 7c4:	8ff5                	and	a5,a5,a3
+	while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {
+ 7c6:	16d79c63          	bne	a5,a3,93e <main+0x2ba>
 		if(--timeout < 0) return I2C_ERR_NACK;
 	}
 
 	// Send the Register Byte
 	I2C1->DATAR = reg;
- 7cc:	00071823          	sh	zero,16(a4)
+ 7ca:	00071823          	sh	zero,16(a4)
 	while(!(I2C1->STAR1 & I2C_STAR1_TXE));
- 7d0:	40005737          	lui	a4,0x40005
- 7d4:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
- 7d8:	01475783          	lhu	a5,20(a4)
- 7dc:	0807f793          	andi	a5,a5,128
- 7e0:	dfe5                	beqz	a5,7d8 <main+0x154>
+ 7ce:	40005737          	lui	a4,0x40005
+ 7d2:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
+ 7d6:	01475783          	lhu	a5,20(a4)
+ 7da:	0807f793          	andi	a5,a5,128
+ 7de:	dfe5                	beqz	a5,7d6 <main+0x152>
 	// Write bytes
 	uint8_t cbyte = 0;
 	while(cbyte < len)
 	{
 		// Write the byte and wait for it to finish transmitting
 		while(!(I2C1->STAR1 & I2C_STAR1_TXE));
- 7e2:	400057b7          	lui	a5,0x40005
- 7e6:	40078793          	addi	a5,a5,1024 # 40005400 <_eusrstack+0x20004c00>
- 7ea:	0147d703          	lhu	a4,20(a5)
- 7ee:	08077713          	andi	a4,a4,128
- 7f2:	df65                	beqz	a4,7ea <main+0x166>
+ 7e0:	400057b7          	lui	a5,0x40005
+ 7e4:	40078793          	addi	a5,a5,1024 # 40005400 <_eusrstack+0x20004c00>
+ 7e8:	0147d703          	lhu	a4,20(a5)
+ 7ec:	08077713          	andi	a4,a4,128
+ 7f0:	df65                	beqz	a4,7e8 <main+0x164>
 		I2C1->DATAR = buf[cbyte];
- 7f4:	4761                	li	a4,24
- 7f6:	00e79823          	sh	a4,16(a5)
- 7fa:	000706b7          	lui	a3,0x70
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 7fe:	400057b7          	lui	a5,0x40005
- 802:	40078793          	addi	a5,a5,1024 # 40005400 <_eusrstack+0x20004c00>
+ 7f2:	4761                	li	a4,24
+ 7f4:	00e79823          	sh	a4,16(a5)
 	return (status & status_mask) == status_mask; 
- 806:	08468693          	addi	a3,a3,132 # 70084 <lib_i2c.c.7820ff9c+0x6dff0>
+ 7f8:	000706b7          	lui	a3,0x70
 	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 80a:	0147d603          	lhu	a2,20(a5)
- 80e:	0187d703          	lhu	a4,24(a5)
- 812:	0742                	slli	a4,a4,0x10
- 814:	8f51                	or	a4,a4,a2
+ 7fc:	40005737          	lui	a4,0x40005
+ 800:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
 	return (status & status_mask) == status_mask; 
- 816:	8f75                	and	a4,a4,a3
+ 804:	08468693          	addi	a3,a3,132 # 70084 <lib_i2c.c.948e1df1+0x6df81>
+	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
+ 808:	01475603          	lhu	a2,20(a4)
+ 80c:	01875783          	lhu	a5,24(a4)
+ 810:	07c2                	slli	a5,a5,0x10
+ 812:	8fd1                	or	a5,a5,a2
+	return (status & status_mask) == status_mask; 
+ 814:	8ff5                	and	a5,a5,a3
 
 		++cbyte;
 	}
 
 	// Wait for the bus to finish transmitting, then send the STOP Signal
 	while(!i2c_status(I2C_EVENT_MASTER_BYTE_TRANSMITTED));
- 818:	fed719e3          	bne	a4,a3,80a <main+0x186>
+ 816:	fed799e3          	bne	a5,a3,808 <main+0x184>
 	I2C1->CTLR1 |= I2C_CTLR1_STOP;
- 81c:	0007d703          	lhu	a4,0(a5)
- 820:	20076713          	ori	a4,a4,512
- 824:	00e79023          	sh	a4,0(a5)
-
-	// Catch some errors
-	i2c_err_t ret_sta = I2C_OK;
-	if(I2C1->STAR1 & I2C_STAR1_AF)
- 828:	0147d703          	lhu	a4,20(a5)
- 82c:	40077713          	andi	a4,a4,1024
- 830:	cb09                	beqz	a4,842 <main+0x1be>
-	{
-		I2C1->STAR1 &= ~(I2C_STAR1_AF);
- 832:	0147d703          	lhu	a4,20(a5)
- 836:	66c1                	lui	a3,0x10
- 838:	bff68693          	addi	a3,a3,-1025 # fbff <lib_i2c.c.7820ff9c+0xdb6b>
- 83c:	8f75                	and	a4,a4,a3
- 83e:	00e79a23          	sh	a4,20(a5)
-		ret_sta = I2C_ERR_NACK;
-	}
-
-	if(I2C1->STAR1 & I2C_STAR1_BERR) 
- 842:	400057b7          	lui	a5,0x40005
- 846:	4147d703          	lhu	a4,1044(a5) # 40005414 <_eusrstack+0x20004c14>
- 84a:	40078793          	addi	a5,a5,1024
- 84e:	10077713          	andi	a4,a4,256
- 852:	cb09                	beqz	a4,864 <main+0x1e0>
-	{
-		I2C1->STAR1 &= ~(I2C_STAR1_BERR); 
- 854:	0147d703          	lhu	a4,20(a5)
- 858:	66c1                	lui	a3,0x10
- 85a:	eff68693          	addi	a3,a3,-257 # feff <lib_i2c.c.7820ff9c+0xde6b>
- 85e:	8f75                	and	a4,a4,a3
- 860:	00e79a23          	sh	a4,20(a5)
-		ret_sta = I2C_ERR_BERR;
-	}
-
-	if(I2C1->STAR1 & I2C_STAR1_ARLO) 
- 864:	400057b7          	lui	a5,0x40005
- 868:	4147d703          	lhu	a4,1044(a5) # 40005414 <_eusrstack+0x20004c14>
- 86c:	40078793          	addi	a5,a5,1024
- 870:	20077713          	andi	a4,a4,512
- 874:	cf09                	beqz	a4,88e <main+0x20a>
-	{
+ 81a:	00075783          	lhu	a5,0(a4)
+ 81e:	2007e793          	ori	a5,a5,512
+ 822:	00f71023          	sh	a5,0(a4)
 		I2C1->STAR1 &= ~(I2C_STAR1_ARLO); 
- 876:	0147d703          	lhu	a4,20(a5)
- 87a:	66c1                	lui	a3,0x10
- 87c:	dff68693          	addi	a3,a3,-513 # fdff <lib_i2c.c.7820ff9c+0xdd6b>
- 880:	8f75                	and	a4,a4,a3
- 882:	00e79a23          	sh	a4,20(a5)
- 886:	a021                	j	88e <main+0x20a>
-	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_TIMEOUT;
- 888:	16fd                	addi	a3,a3,-1
- 88a:	ec069fe3          	bnez	a3,768 <main+0xe4>
+		ret_sta = I2C_ERR_ARLO;
+	}
+	*/
+
+	return ret_sta;
+ 826:	a019                	j	82c <main+0x1a8>
+	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_BUSY;
+ 828:	16fd                	addi	a3,a3,-1
+ 82a:	fe9d                	bnez	a3,768 <main+0xe4>
+	while(I2C1->STAR2 & I2C_STAR2_BUSY) 
+ 82c:	40005437          	lui	s0,0x40005
 
 
 
 
 
 	uint8_t secs = 0;
- 88e:	4481                	li	s1,0
+ 830:	4481                	li	s1,0
+ 832:	40040413          	addi	s0,s0,1024 # 40005400 <_eusrstack+0x20004c00>
+	uint32_t targend = SysTick->CNT + n;
+ 836:	e000f7b7          	lui	a5,0xe000f
+ 83a:	4798                	lw	a4,8(a5)
+ 83c:	000927b7          	lui	a5,0x92
+ 840:	7c078793          	addi	a5,a5,1984 # 927c0 <lib_i2c.c.948e1df1+0x906bd>
+ 844:	973e                	add	a4,a4,a5
+	while( ((int32_t)( SysTick->CNT - targend )) < 0 );
+ 846:	e000f6b7          	lui	a3,0xe000f
+ 84a:	469c                	lw	a5,8(a3)
+ 84c:	8f99                	sub	a5,a5,a4
+ 84e:	fe07cee3          	bltz	a5,84a <main+0x1c6>
+ 852:	7d100713          	li	a4,2001
+ 856:	01845783          	lhu	a5,24(s0)
+ 85a:	8b89                	andi	a5,a5,2
+ 85c:	e7ed                	bnez	a5,946 <main+0x2c2>
+		I2C1->CTLR1 |= I2C_CTLR1_START;
+ 85e:	00045783          	lhu	a5,0(s0)
+	return (status & status_mask) == status_mask; 
+ 862:	00030737          	lui	a4,0x30
+ 866:	0705                	addi	a4,a4,1 # 30001 <lib_i2c.c.948e1df1+0x2defe>
+		I2C1->CTLR1 |= I2C_CTLR1_START;
+ 868:	1007e793          	ori	a5,a5,256
+ 86c:	00f41023          	sh	a5,0(s0)
+	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
+ 870:	01445683          	lhu	a3,20(s0)
+ 874:	01845783          	lhu	a5,24(s0)
+ 878:	07c2                	slli	a5,a5,0x10
+ 87a:	8fd5                	or	a5,a5,a3
+	return (status & status_mask) == status_mask; 
+ 87c:	8ff9                	and	a5,a5,a4
+		while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
+ 87e:	fee799e3          	bne	a5,a4,870 <main+0x1ec>
+		I2C1->DATAR = (addr << 1) & 0xFE;
+ 882:	0d000793          	li	a5,208
+	return (status & status_mask) == status_mask; 
+ 886:	00070737          	lui	a4,0x70
+		I2C1->DATAR = (addr << 1) & 0xFE;
+ 88a:	00f41823          	sh	a5,16(s0)
+		while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+ 88e:	7d100693          	li	a3,2001
+	return (status & status_mask) == status_mask; 
+ 892:	08270713          	addi	a4,a4,130 # 70082 <lib_i2c.c.948e1df1+0x6df7f>
+	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
+ 896:	01445603          	lhu	a2,20(s0)
+ 89a:	01845783          	lhu	a5,24(s0)
+ 89e:	07c2                	slli	a5,a5,0x10
+ 8a0:	8fd1                	or	a5,a5,a2
+	return (status & status_mask) == status_mask; 
+ 8a2:	8ff9                	and	a5,a5,a4
+		while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+ 8a4:	10e79163          	bne	a5,a4,9a6 <main+0x322>
+		I2C1->DATAR = reg;
+ 8a8:	00041823          	sh	zero,16(s0)
+		while(!(I2C1->STAR1 & I2C_STAR1_TXE));
+ 8ac:	01445783          	lhu	a5,20(s0)
+ 8b0:	0807f793          	andi	a5,a5,128
+ 8b4:	dfe5                	beqz	a5,8ac <main+0x228>
+		I2C1->CTLR1 |= I2C_CTLR1_START;
+ 8b6:	00045783          	lhu	a5,0(s0)
+	return (status & status_mask) == status_mask; 
+ 8ba:	00030737          	lui	a4,0x30
+ 8be:	0705                	addi	a4,a4,1 # 30001 <lib_i2c.c.948e1df1+0x2defe>
+		I2C1->CTLR1 |= I2C_CTLR1_START;
+ 8c0:	1007e793          	ori	a5,a5,256
+ 8c4:	00f41023          	sh	a5,0(s0)
+	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
+ 8c8:	01445683          	lhu	a3,20(s0)
+ 8cc:	01845783          	lhu	a5,24(s0)
+ 8d0:	07c2                	slli	a5,a5,0x10
+ 8d2:	8fd5                	or	a5,a5,a3
+	return (status & status_mask) == status_mask; 
+ 8d4:	8ff9                	and	a5,a5,a4
+		while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
+ 8d6:	fee799e3          	bne	a5,a4,8c8 <main+0x244>
+		I2C1->DATAR = (addr << 1) | 0x01;
+ 8da:	0d100793          	li	a5,209
+	return (status & status_mask) == status_mask; 
+ 8de:	00030737          	lui	a4,0x30
+		I2C1->DATAR = (addr << 1) | 0x01;
+ 8e2:	00f41823          	sh	a5,16(s0)
+		while(!i2c_status(I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
+ 8e6:	7d100693          	li	a3,2001
+	return (status & status_mask) == status_mask; 
+ 8ea:	0709                	addi	a4,a4,2 # 30002 <lib_i2c.c.948e1df1+0x2deff>
+	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
+ 8ec:	01445603          	lhu	a2,20(s0)
+ 8f0:	01845783          	lhu	a5,24(s0)
+ 8f4:	07c2                	slli	a5,a5,0x10
+ 8f6:	8fd1                	or	a5,a5,a2
+	return (status & status_mask) == status_mask; 
+ 8f8:	8ff9                	and	a5,a5,a4
+		while(!i2c_status(I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
+ 8fa:	0ae79a63          	bne	a5,a4,9ae <main+0x32a>
+			while(!(I2C1->STAR1 & I2C_STAR1_RXNE));
+ 8fe:	01445783          	lhu	a5,20(s0)
+ 902:	0407f793          	andi	a5,a5,64
+ 906:	dfe5                	beqz	a5,8fe <main+0x27a>
+			buf[cbyte] = I2C1->DATAR;
+ 908:	01045483          	lhu	s1,16(s0)
+	if(I2C1->STAR1 & I2C_STAR1_BERR) {I2C1->STAR1 &= ~I2C_STAR1_BERR; return I2C_ERR_BERR;}
+ 90c:	01445783          	lhu	a5,20(s0)
+			buf[cbyte] = I2C1->DATAR;
+ 910:	0ff4f493          	zext.b	s1,s1
+	if(I2C1->STAR1 & I2C_STAR1_BERR) {I2C1->STAR1 &= ~I2C_STAR1_BERR; return I2C_ERR_BERR;}
+ 914:	1007f793          	andi	a5,a5,256
+ 918:	ef95                	bnez	a5,954 <main+0x2d0>
+	if(I2C1->STAR1 & I2C_STAR1_AF) {I2C1->STAR1 &= ~I2C_STAR1_AF; return I2C_ERR_NACK;}
+ 91a:	01445783          	lhu	a5,20(s0)
+ 91e:	4007f793          	andi	a5,a5,1024
+ 922:	eba1                	bnez	a5,972 <main+0x2ee>
+	if(I2C1->STAR1 & I2C_STAR1_ARLO) {I2C1->STAR1 &= ~I2C_STAR1_ARLO; return I2C_ERR_ARLO;}
+ 924:	01445783          	lhu	a5,20(s0)
+ 928:	2007f793          	andi	a5,a5,512
+ 92c:	ebc9                	bnez	a5,9be <main+0x33a>
+	if(I2C1->STAR1 & I2C_STAR1_OVR) {I2C1->STAR1 &= ~I2C_STAR1_OVR; return I2C_ERR_OVR;}
+ 92e:	01445783          	lhu	a5,20(s0)
+ 932:	01479713          	slli	a4,a5,0x14
+ 936:	0a074563          	bltz	a4,9e0 <main+0x35c>
+ 93a:	4581                	li	a1,0
+ 93c:	a0a1                	j	984 <main+0x300>
+		if(--timeout < 0) return I2C_ERR_NACK;
+ 93e:	167d                	addi	a2,a2,-1 # 1fffff <lib_i2c.c.948e1df1+0x1fdefc>
+ 940:	e6061ce3          	bnez	a2,7b8 <main+0x134>
+ 944:	b5e5                	j	82c <main+0x1a8>
+		if(--timeout < 0) {i2c_ret = i2c_get_busy_error(); break;}
+ 946:	177d                	addi	a4,a4,-1
+ 948:	f719                	bnez	a4,856 <main+0x1d2>
+	if(I2C1->STAR1 & I2C_STAR1_BERR) {I2C1->STAR1 &= ~I2C_STAR1_BERR; return I2C_ERR_BERR;}
+ 94a:	01445783          	lhu	a5,20(s0)
+ 94e:	1007f793          	andi	a5,a5,256
+ 952:	cb99                	beqz	a5,968 <main+0x2e4>
+ 954:	01445783          	lhu	a5,20(s0)
+ 958:	6741                	lui	a4,0x10
+ 95a:	eff70713          	addi	a4,a4,-257 # feff <lib_i2c.c.948e1df1+0xddfc>
+ 95e:	8ff9                	and	a5,a5,a4
+ 960:	00f41a23          	sh	a5,20(s0)
+			if((i2c_ret = i2c_error()) != I2C_OK) break;
+ 964:	4585                	li	a1,1
+ 966:	a839                	j	984 <main+0x300>
+	if(I2C1->STAR1 & I2C_STAR1_AF) {I2C1->STAR1 &= ~I2C_STAR1_AF; return I2C_ERR_NACK;}
+ 968:	01445783          	lhu	a5,20(s0)
+ 96c:	4007f793          	andi	a5,a5,1024
+ 970:	c3b1                	beqz	a5,9b4 <main+0x330>
+ 972:	01445783          	lhu	a5,20(s0)
+ 976:	6741                	lui	a4,0x10
+ 978:	bff70713          	addi	a4,a4,-1025 # fbff <lib_i2c.c.948e1df1+0xdafc>
+ 97c:	8ff9                	and	a5,a5,a4
+ 97e:	00f41a23          	sh	a5,20(s0)
+	i2c_err_t i2c_err = i2c_error();
+ 982:	4589                	li	a1,2
+	I2C1->CTLR1 |= I2C_CTLR1_STOP;
+ 984:	00045783          	lhu	a5,0(s0)
+ 988:	2007e793          	ori	a5,a5,512
+ 98c:	00f41023          	sh	a5,0(s0)
 	i2c_write(0x68, 0x00, (uint8_t[]){0x18}, 1);
 	while(1)
 	{
 		Delay_Ms(100);
-		i2c_read(0x68, 0x00, &secs, 1);
+		i2c_err_t i2c_stat = i2c_read(0x68, 0x00, &secs, 1);
+		if(i2c_stat != I2C_OK) printf("Fucked. Err %ld\n", (uint32_t)i2c_stat);
+ 990:	c589                	beqz	a1,99a <main+0x316>
+ 992:	6505                	lui	a0,0x1
+ 994:	9f450513          	addi	a0,a0,-1548 # 9f4 <main+0x370>
+ 998:	391d                	jal	5ce <printf>
 		printf("secs: %2X\n", secs);
- 890:	6405                	lui	s0,0x1
-	uint32_t targend = SysTick->CNT + n;
- 892:	e000f7b7          	lui	a5,0xe000f
- 896:	4798                	lw	a4,8(a5)
- 898:	000927b7          	lui	a5,0x92
- 89c:	7c078793          	addi	a5,a5,1984 # 927c0 <lib_i2c.c.7820ff9c+0x9072c>
- 8a0:	973e                	add	a4,a4,a5
-	while( ((int32_t)( SysTick->CNT - targend )) < 0 );
- 8a2:	e000f6b7          	lui	a3,0xe000f
- 8a6:	469c                	lw	a5,8(a3)
- 8a8:	8f99                	sub	a5,a5,a4
- 8aa:	fe07cee3          	bltz	a5,8a6 <main+0x222>
-	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_TIMEOUT;
- 8ae:	400057b7          	lui	a5,0x40005
- 8b2:	7d100693          	li	a3,2001
- 8b6:	40078793          	addi	a5,a5,1024 # 40005400 <_eusrstack+0x20004c00>
- 8ba:	0187d703          	lhu	a4,24(a5)
- 8be:	8b09                	andi	a4,a4,2
- 8c0:	16071163          	bnez	a4,a22 <main+0x39e>
-	I2C1->CTLR1 |= I2C_CTLR1_START;
- 8c4:	0007d703          	lhu	a4,0(a5)
- 8c8:	000306b7          	lui	a3,0x30
- 8cc:	0685                	addi	a3,a3,1 # 30001 <lib_i2c.c.7820ff9c+0x2df6d>
- 8ce:	10076713          	ori	a4,a4,256
- 8d2:	00e79023          	sh	a4,0(a5)
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 8d6:	40005737          	lui	a4,0x40005
- 8da:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
- 8de:	01475603          	lhu	a2,20(a4)
- 8e2:	01875783          	lhu	a5,24(a4)
- 8e6:	07c2                	slli	a5,a5,0x10
- 8e8:	8fd1                	or	a5,a5,a2
-	return (status & status_mask) == status_mask; 
- 8ea:	8ff5                	and	a5,a5,a3
-	while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
- 8ec:	fed799e3          	bne	a5,a3,8de <main+0x25a>
-	I2C1->DATAR = (addr << 1) & 0xFE;
- 8f0:	0d000793          	li	a5,208
- 8f4:	00f71823          	sh	a5,16(a4)
- 8f8:	000706b7          	lui	a3,0x70
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 8fc:	40005737          	lui	a4,0x40005
-	while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {
- 900:	7d100613          	li	a2,2001
- 904:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
-	return (status & status_mask) == status_mask; 
- 908:	08268693          	addi	a3,a3,130 # 70082 <lib_i2c.c.7820ff9c+0x6dfee>
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 90c:	01475583          	lhu	a1,20(a4)
- 910:	01875783          	lhu	a5,24(a4)
- 914:	07c2                	slli	a5,a5,0x10
- 916:	8fcd                	or	a5,a5,a1
-	return (status & status_mask) == status_mask; 
- 918:	8ff5                	and	a5,a5,a3
- 91a:	10d79c63          	bne	a5,a3,a32 <main+0x3ae>
-	while(!(I2C1->STAR1 & I2C_STAR1_TXE));
- 91e:	400057b7          	lui	a5,0x40005
-	I2C1->DATAR = reg;
- 922:	00071823          	sh	zero,16(a4)
-	while(!(I2C1->STAR1 & I2C_STAR1_TXE));
- 926:	40078793          	addi	a5,a5,1024 # 40005400 <_eusrstack+0x20004c00>
- 92a:	0147d703          	lhu	a4,20(a5)
- 92e:	08077713          	andi	a4,a4,128
- 932:	df65                	beqz	a4,92a <main+0x2a6>
-	I2C1->CTLR1 |= I2C_CTLR1_START;
- 934:	0007d703          	lhu	a4,0(a5)
- 938:	000306b7          	lui	a3,0x30
- 93c:	0685                	addi	a3,a3,1 # 30001 <lib_i2c.c.7820ff9c+0x2df6d>
- 93e:	10076713          	ori	a4,a4,256
- 942:	00e79023          	sh	a4,0(a5)
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 946:	40005737          	lui	a4,0x40005
- 94a:	40070713          	addi	a4,a4,1024 # 40005400 <_eusrstack+0x20004c00>
- 94e:	01475603          	lhu	a2,20(a4)
- 952:	01875783          	lhu	a5,24(a4)
- 956:	07c2                	slli	a5,a5,0x10
- 958:	8fd1                	or	a5,a5,a2
-	return (status & status_mask) == status_mask; 
- 95a:	8ff5                	and	a5,a5,a3
-	while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
- 95c:	fed799e3          	bne	a5,a3,94e <main+0x2ca>
-	I2C1->DATAR = (addr << 1) | 0x01;
- 960:	0d100793          	li	a5,209
- 964:	00f71823          	sh	a5,16(a4)
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 968:	400056b7          	lui	a3,0x40005
-	return (status & status_mask) == status_mask; 
- 96c:	00030737          	lui	a4,0x30
-	while(!i2c_status(I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)) {
- 970:	7d100613          	li	a2,2001
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 974:	40068693          	addi	a3,a3,1024 # 40005400 <_eusrstack+0x20004c00>
-	return (status & status_mask) == status_mask; 
- 978:	0709                	addi	a4,a4,2 # 30002 <lib_i2c.c.7820ff9c+0x2df6e>
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
- 97a:	0146d583          	lhu	a1,20(a3)
- 97e:	0186d783          	lhu	a5,24(a3)
- 982:	07c2                	slli	a5,a5,0x10
- 984:	8fcd                	or	a5,a5,a1
-	return (status & status_mask) == status_mask; 
- 986:	8ff9                	and	a5,a5,a4
- 988:	0ae79963          	bne	a5,a4,a3a <main+0x3b6>
-		while(!(I2C1->STAR1 & I2C_STAR1_RXNE));
- 98c:	400057b7          	lui	a5,0x40005
- 990:	40078793          	addi	a5,a5,1024 # 40005400 <_eusrstack+0x20004c00>
- 994:	0147d703          	lhu	a4,20(a5)
- 998:	04077713          	andi	a4,a4,64
- 99c:	df65                	beqz	a4,994 <main+0x310>
-		buf[cbyte] = I2C1->DATAR;
- 99e:	0107d483          	lhu	s1,16(a5)
-	if(I2C1->STAR1 & I2C_STAR1_AF)
- 9a2:	0147d703          	lhu	a4,20(a5)
-		buf[cbyte] = I2C1->DATAR;
- 9a6:	04c2                	slli	s1,s1,0x10
-	if(I2C1->STAR1 & I2C_STAR1_AF)
- 9a8:	40077713          	andi	a4,a4,1024
-		buf[cbyte] = I2C1->DATAR;
- 9ac:	80c1                	srli	s1,s1,0x10
-	if(I2C1->STAR1 & I2C_STAR1_AF)
- 9ae:	cb09                	beqz	a4,9c0 <main+0x33c>
-		I2C1->STAR1 &= ~(I2C_STAR1_AF);
- 9b0:	0147d703          	lhu	a4,20(a5)
- 9b4:	66c1                	lui	a3,0x10
- 9b6:	bff68693          	addi	a3,a3,-1025 # fbff <lib_i2c.c.7820ff9c+0xdb6b>
- 9ba:	8f75                	and	a4,a4,a3
- 9bc:	00e79a23          	sh	a4,20(a5)
-	if(I2C1->STAR1 & I2C_STAR1_BERR) 
- 9c0:	400057b7          	lui	a5,0x40005
- 9c4:	4147d703          	lhu	a4,1044(a5) # 40005414 <_eusrstack+0x20004c14>
- 9c8:	40078793          	addi	a5,a5,1024
- 9cc:	10077713          	andi	a4,a4,256
- 9d0:	cb09                	beqz	a4,9e2 <main+0x35e>
-		I2C1->STAR1 &= ~(I2C_STAR1_BERR); 
- 9d2:	0147d703          	lhu	a4,20(a5)
- 9d6:	66c1                	lui	a3,0x10
- 9d8:	eff68693          	addi	a3,a3,-257 # feff <lib_i2c.c.7820ff9c+0xde6b>
- 9dc:	8f75                	and	a4,a4,a3
- 9de:	00e79a23          	sh	a4,20(a5)
-	if(I2C1->STAR1 & I2C_STAR1_ARLO) 
- 9e2:	400057b7          	lui	a5,0x40005
- 9e6:	4147d703          	lhu	a4,1044(a5) # 40005414 <_eusrstack+0x20004c14>
- 9ea:	40078793          	addi	a5,a5,1024
- 9ee:	20077713          	andi	a4,a4,512
- 9f2:	cb09                	beqz	a4,a04 <main+0x380>
-		I2C1->STAR1 &= ~(I2C_STAR1_ARLO); 
- 9f4:	0147d703          	lhu	a4,20(a5)
- 9f8:	66c1                	lui	a3,0x10
- 9fa:	dff68693          	addi	a3,a3,-513 # fdff <lib_i2c.c.7820ff9c+0xdd6b>
- 9fe:	8f75                	and	a4,a4,a3
- a00:	00e79a23          	sh	a4,20(a5)
-	I2C1->CTLR1 |= I2C_CTLR1_STOP;
- a04:	400057b7          	lui	a5,0x40005
- a08:	4007d703          	lhu	a4,1024(a5) # 40005400 <_eusrstack+0x20004c00>
-		buf[cbyte] = I2C1->DATAR;
- a0c:	0ff4f493          	zext.b	s1,s1
-	I2C1->CTLR1 |= I2C_CTLR1_STOP;
- a10:	20076713          	ori	a4,a4,512
- a14:	40e79023          	sh	a4,1024(a5)
-	return ret_sta;
- a18:	a801                	j	a28 <main+0x3a4>
-		if(--timeout < 0) return I2C_ERR_NACK;
- a1a:	167d                	addi	a2,a2,-1 # 1fffff <lib_i2c.c.7820ff9c+0x1fdf6b>
- a1c:	d8061fe3          	bnez	a2,7ba <main+0x136>
- a20:	b5bd                	j	88e <main+0x20a>
-	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_TIMEOUT;
- a22:	16fd                	addi	a3,a3,-1
- a24:	e8069be3          	bnez	a3,8ba <main+0x236>
- a28:	85a6                	mv	a1,s1
- a2a:	a4040513          	addi	a0,s0,-1472 # a40 <main+0x3bc>
- a2e:	3645                	jal	5ce <printf>
-	while(1)
- a30:	b58d                	j	892 <main+0x20e>
-		if(--timeout < 0) return I2C_ERR_NACK;
- a32:	167d                	addi	a2,a2,-1
- a34:	ec061ce3          	bnez	a2,90c <main+0x288>
- a38:	bfc5                	j	a28 <main+0x3a4>
-		if(--timeout < 0) return I2C_ERR_NACK;
- a3a:	167d                	addi	a2,a2,-1
- a3c:	fe1d                	bnez	a2,97a <main+0x2f6>
- a3e:	b7ed                	j	a28 <main+0x3a4>
- a40:	73636573          	csrrsi	a0,mhpmevent22h,6
- a44:	203a                	.insn	2, 0x203a
- a46:	3225                	jal	36e <__puts_uart+0x8>
- a48:	0a58                	addi	a4,sp,276
+ 99a:	6505                	lui	a0,0x1
+ 99c:	85a6                	mv	a1,s1
+ 99e:	a0850513          	addi	a0,a0,-1528 # a08 <main+0x384>
+ 9a2:	3135                	jal	5ce <printf>
+	{
+ 9a4:	bd49                	j	836 <main+0x1b2>
+			if(--timeout < 0) {i2c_ret = i2c_get_busy_error(); break;}
+ 9a6:	16fd                	addi	a3,a3,-1 # e000efff <_eusrstack+0xc000e7ff>
+ 9a8:	ee0697e3          	bnez	a3,896 <main+0x212>
+ 9ac:	bf79                	j	94a <main+0x2c6>
+			if(--timeout < 0) {i2c_ret = i2c_get_busy_error(); break;}
+ 9ae:	16fd                	addi	a3,a3,-1
+ 9b0:	fe95                	bnez	a3,8ec <main+0x268>
+ 9b2:	bf61                	j	94a <main+0x2c6>
+	if(I2C1->STAR1 & I2C_STAR1_ARLO) {I2C1->STAR1 &= ~I2C_STAR1_ARLO; return I2C_ERR_ARLO;}
+ 9b4:	01445783          	lhu	a5,20(s0)
+ 9b8:	2007f793          	andi	a5,a5,512
+ 9bc:	cb99                	beqz	a5,9d2 <main+0x34e>
+ 9be:	01445783          	lhu	a5,20(s0)
+ 9c2:	6741                	lui	a4,0x10
+ 9c4:	dff70713          	addi	a4,a4,-513 # fdff <lib_i2c.c.948e1df1+0xdcfc>
+ 9c8:	8ff9                	and	a5,a5,a4
+ 9ca:	00f41a23          	sh	a5,20(s0)
+			if((i2c_ret = i2c_error()) != I2C_OK) break;
+ 9ce:	458d                	li	a1,3
+ 9d0:	bf55                	j	984 <main+0x300>
+	if(I2C1->STAR1 & I2C_STAR1_OVR) {I2C1->STAR1 &= ~I2C_STAR1_OVR; return I2C_ERR_OVR;}
+ 9d2:	01445783          	lhu	a5,20(s0)
+	if(i2c_err == I2C_OK) i2c_err = I2C_ERR_BUSY;
+ 9d6:	4595                	li	a1,5
+	if(I2C1->STAR1 & I2C_STAR1_OVR) {I2C1->STAR1 &= ~I2C_STAR1_OVR; return I2C_ERR_OVR;}
+ 9d8:	01479713          	slli	a4,a5,0x14
+ 9dc:	fa0754e3          	bgez	a4,984 <main+0x300>
+ 9e0:	01445783          	lhu	a5,20(s0)
+ 9e4:	777d                	lui	a4,0xfffff
+ 9e6:	7ff70713          	addi	a4,a4,2047 # fffff7ff <_eusrstack+0xdfffefff>
+ 9ea:	8ff9                	and	a5,a5,a4
+ 9ec:	00f41a23          	sh	a5,20(s0)
+	i2c_err_t i2c_err = i2c_error();
+ 9f0:	4591                	li	a1,4
+ 9f2:	bf49                	j	984 <main+0x300>
+ 9f4:	7546                	.insn	2, 0x7546
+ 9f6:	64656b63          	bltu	a0,t1,104c <_data_lma+0x638>
+ 9fa:	202e                	.insn	2, 0x202e
+ 9fc:	7245                	lui	tp,0xffff1
+ 9fe:	2072                	.insn	2, 0x2072
+ a00:	6c25                	lui	s8,0x9
+ a02:	0a64                	addi	s1,sp,284
+ a04:	0000                	unimp
+ a06:	0000                	unimp
+ a08:	73636573          	csrrsi	a0,mhpmevent22h,6
+ a0c:	203a                	.insn	2, 0x203a
+ a0e:	3225                	jal	336 <_write.constprop.0+0xb0>
+ a10:	0a58                	addi	a4,sp,276
 	...

@@ -37,10 +37,6 @@
 #ifndef CH32_LIB_I2C_H
 #define CH32_LIB_I2C_H
 
-// TODO: Assess why the I2C Bus halts and doesn't recover from pins being 
-// swapped (look at the registers in real-time)
-
-
 #include "ch32v003fun.h"
 
 // TESTED: DEFAULT OK    ALT_1 OK    
@@ -87,22 +83,12 @@
 // Error Code Definitons
 typedef enum {
 	I2C_OK      = 0,  // No Error. All OK
-	I2C_ERR_TIMEOUT,  // Timeout happened when read/write
-	I2C_ERR_NACK,     // ACK Bit failed
 	I2C_ERR_BERR,     // Bus Error
+	I2C_ERR_NACK,     // ACK Bit failed
 	I2C_ERR_ARLO,     // Arbitration Lost
+	I2C_ERR_OVR,      // Overun/underrun condition
+	I2C_ERR_BUSY,     // Bus was busy and timed out
 } i2c_err_t;
-
-/*** Static Functions ********************************************************/
-/// @breif Checks the I2C Status against a mask value, returns 1 if it matches
-/// @param Status To match to
-/// @return uint32_t masked status value: 1 if mask and status match
-__attribute__((always_inline))
-static inline uint32_t i2c_status(const uint32_t status_mask)
-{
-	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
-	return (status & status_mask) == status_mask; 
-}
 
 
 /*** Functions ***************************************************************/

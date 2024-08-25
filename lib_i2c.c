@@ -32,6 +32,50 @@
 #include "lib_i2c.h"
 #include <stdio.h>
 
+/*** Static Functions ********************************************************/
+/// @breif Checks the I2C Status against a mask value, returns 1 if it matches
+/// @param Status To match to
+/// @return uint32_t masked status value: 1 if mask and status match
+__attribute__((always_inline))
+static inline uint32_t i2c_status(const uint32_t status_mask)
+{
+	uint32_t status = (uint32_t)I2C1->STAR1 | (uint32_t)(I2C1->STAR2 << 16);
+	return (status & status_mask) == status_mask; 
+}
+
+/// @breif Gets and returns any error state on the I2C Interface, and resets
+/// the bit flags
+/// @param none
+/// @return i2c_err_t error value
+__attribute__((always_inline))
+static inline i2c_err_t i2c_error(void)
+{
+	// BERR
+	if(I2C1->STAR1 & I2C_STAR1_BERR) {I2C1->STAR1 &= ~I2C_STAR1_BERR; return I2C_ERR_BERR;}
+	// NACK
+	if(I2C1->STAR1 & I2C_STAR1_AF) {I2C1->STAR1 &= ~I2C_STAR1_AF; return I2C_ERR_NACK;}
+	// ARLO
+	if(I2C1->STAR1 & I2C_STAR1_ARLO) {I2C1->STAR1 &= ~I2C_STAR1_ARLO; return I2C_ERR_ARLO;}
+	// OVR
+	if(I2C1->STAR1 & I2C_STAR1_OVR) {I2C1->STAR1 &= ~I2C_STAR1_OVR; return I2C_ERR_OVR;}
+
+	return I2C_OK;
+}
+
+/// @breif Checks the current I2C Status, if it does not have an error state,
+/// it defaults to I2C_ERR_BUSY
+/// @param None
+/// @return i2c_err_t error value
+__attribute__((always_inline))
+static inline uint32_t i2c_get_busy_error(void)
+{
+	i2c_err_t i2c_err = i2c_error();
+	if(i2c_err == I2C_OK) i2c_err = I2C_ERR_BUSY;
+	return i2c_err;
+}
+
+
+
 /*** API Functions ***********************************************************/
 i2c_err_t i2c_init(uint32_t clk_rate)
 {
@@ -55,7 +99,6 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 	I2C_PORT->CFGLR &= ~(0x0F << (4 * I2C_PIN_SCL));
 	I2C_PORT->CFGLR |= (GPIO_Speed_10MHz | GPIO_CNF_OUT_OD_AF) << (4 * I2C_PIN_SCL);
 
-
 	// Set the Prerate frequency
 	uint16_t i2c_conf = I2C1->CTLR2 & ~I2C_CTLR2_FREQ;
 	i2c_conf |= (FUNCONF_SYSTEM_CORE_CLOCK / I2C_PRERATE) & I2C_CTLR2_FREQ;
@@ -75,6 +118,7 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 	// Enable the I2C Peripheral
 	I2C1->CTLR1 |= I2C_CTLR1_PE;
 
+	//TODO:
 	// Check error states
 	if(I2C1->STAR1 & I2C_STAR1_BERR) 
 	{
@@ -88,45 +132,31 @@ i2c_err_t i2c_init(uint32_t clk_rate)
 
 i2c_err_t i2c_ping(const uint8_t addr)
 {
-	i2c_err_t ret_sta = I2C_OK;
+	i2c_err_t i2c_ret = I2C_OK;
 
 	// Wait for the bus to become not busy - return I2C_ERR_TIMEOUT on failure
 	int32_t timeout = I2C_TIMEOUT;
-	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_TIMEOUT;
+	while(I2C1->STAR2 & I2C_STAR2_BUSY) 
+		if(--timeout < 0) i2c_ret = I2C_ERR_BUSY;
 
-	// Send a START Signal and wait for it to assert
-	I2C1->CTLR1 |= I2C_CTLR1_START;
-	while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
-
-	// Send the Address and wait for it to finish transmitting
-	timeout = I2C_TIMEOUT;
-	I2C1->DATAR = (addr << 1) & 0xFE;
-	while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {
-		if(--timeout < 0) { ret_sta = I2C_ERR_NACK; break; }
-	}
-
-	// Catch some errors
-	if(I2C1->STAR1 & I2C_STAR1_AF)
+	if(i2c_ret == I2C_OK)
 	{
-		I2C1->STAR1 &= ~(I2C_STAR1_AF);
-		ret_sta = I2C_ERR_NACK;
+		// Send a START Signal and wait for it to assert
+		I2C1->CTLR1 |= I2C_CTLR1_START;
+		while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
+
+		// Send the Address and wait for it to finish transmitting
+		timeout = I2C_TIMEOUT;
+		I2C1->DATAR = (addr << 1) & 0xFE;
+		// If the device times out, get the error status - if status is okay,
+		// return generic I2C_ERR_BUSY Flag
+		while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+			if(--timeout < 0) {i2c_ret = i2c_get_busy_error(); break;}
 	}
 
-	if(I2C1->STAR1 & I2C_STAR1_BERR) 
-	{
-		I2C1->STAR1 &= ~(I2C_STAR1_BERR); 
-		ret_sta = I2C_ERR_BERR;
-	}
-
-	if(I2C1->STAR1 & I2C_STAR1_ARLO) 
-	{
-		I2C1->STAR1 &= ~(I2C_STAR1_ARLO); 
-		ret_sta = I2C_ERR_ARLO;
-	}
-
-	// Send the STOP Signal, return OK or NACK depending
+	// Send the STOP Signal, return i2c status
 	I2C1->CTLR1 |= I2C_CTLR1_STOP;
-	return ret_sta;
+	return i2c_ret;
 }
 
 
@@ -148,77 +178,70 @@ i2c_err_t i2c_read(const uint8_t addr,    const uint8_t reg,
 				                          uint8_t *buf,
                                           const uint8_t len)
 {
-	// Wait for the bus to become not busy - return I2C_ERR_TIMEOUT on failure
+	i2c_err_t i2c_ret = I2C_OK;
+
+	// Wait for the bus to become not busy - set state to I2C_ERR_TIMEOUT on failure
 	int32_t timeout = I2C_TIMEOUT;
-	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_TIMEOUT;
-
-	// Send a START Signal and wait for it to assert
-	I2C1->CTLR1 |= I2C_CTLR1_START;
-	while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
-
-	// Send the Address and wait for it to finish transmitting
-	timeout = I2C_TIMEOUT;
-	I2C1->DATAR = (addr << 1) & 0xFE;
-	while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {
-		if(--timeout < 0) return I2C_ERR_NACK;
-	}
-
-	// Send the Register Byte
-	I2C1->DATAR = reg;
-	while(!(I2C1->STAR1 & I2C_STAR1_TXE));
-
-	// If the message is long enough, enable ACK messages
-	if(len > 1) I2C1->CTLR1 |= I2C_CTLR1_ACK;
-
-	// Send a Repeated START Signal and wait for it to assert
-	I2C1->CTLR1 |= I2C_CTLR1_START;
-	while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
-
-	// Send Read Address
-	timeout = I2C_TIMEOUT;
-	I2C1->DATAR = (addr << 1) | 0x01;
-	while(!i2c_status(I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)) {
-		if(--timeout < 0) return I2C_ERR_NACK;
-	}
-
-	// Read bytes
-	uint8_t cbyte = 0;
-	while(cbyte < len)
+	while(I2C1->STAR2 & I2C_STAR2_BUSY) 
+		if(--timeout < 0) {i2c_ret = i2c_get_busy_error(); break;}
+	
+	if(i2c_ret == I2C_OK)
 	{
-		// If this is the last byte, send the NACK Bit
-		if(cbyte == len) I2C1->CTLR1 &= ~I2C_CTLR1_ACK;
+		// Send a START Signal and wait for it to assert
+		I2C1->CTLR1 |= I2C_CTLR1_START;
+		while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
 
-		// Wait until the Read Register isn't empty
-		while(!(I2C1->STAR1 & I2C_STAR1_RXNE));
-		buf[cbyte] = I2C1->DATAR;
-
-		++cbyte;
+		// Send the Address and wait for it to finish transmitting
+		timeout = I2C_TIMEOUT;
+		I2C1->DATAR = (addr << 1) & 0xFE;
+		while(!i2c_status(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+			if(--timeout < 0) {i2c_ret = i2c_get_busy_error(); break;}
 	}
 
-	// Catch some errors
-	i2c_err_t ret_sta = I2C_OK;
-	if(I2C1->STAR1 & I2C_STAR1_AF)
+	if(i2c_ret == I2C_OK)
 	{
-		I2C1->STAR1 &= ~(I2C_STAR1_AF);
-		ret_sta = I2C_ERR_NACK;
+		// Send the Register Byte
+		I2C1->DATAR = reg;
+		while(!(I2C1->STAR1 & I2C_STAR1_TXE));
+
+		// If the message is long enough, enable ACK messages
+		if(len > 1) I2C1->CTLR1 |= I2C_CTLR1_ACK;
+
+		// Send a Repeated START Signal and wait for it to assert
+		I2C1->CTLR1 |= I2C_CTLR1_START;
+		while(!i2c_status(I2C_EVENT_MASTER_MODE_SELECT));
+
+		// Send Read Address
+		timeout = I2C_TIMEOUT;
+		I2C1->DATAR = (addr << 1) | 0x01;
+		while(!i2c_status(I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
+			if(--timeout < 0) {i2c_ret = i2c_get_busy_error(); break;}
 	}
 
-	if(I2C1->STAR1 & I2C_STAR1_BERR) 
+	if(i2c_ret == I2C_OK)
 	{
-		I2C1->STAR1 &= ~(I2C_STAR1_BERR); 
-		ret_sta = I2C_ERR_BERR;
-	}
+		// Read bytes
+		uint8_t cbyte = 0;
+		while(cbyte < len)
+		{
+			// If this is the last byte, send the NACK Bit
+			if(cbyte == len) I2C1->CTLR1 &= ~I2C_CTLR1_ACK;
 
-	if(I2C1->STAR1 & I2C_STAR1_ARLO) 
-	{
-		I2C1->STAR1 &= ~(I2C_STAR1_ARLO); 
-		ret_sta = I2C_ERR_ARLO;
+			// Wait until the Read Register isn't empty
+			while(!(I2C1->STAR1 & I2C_STAR1_RXNE));
+			buf[cbyte] = I2C1->DATAR;
+
+			// Make sure no errors occured
+			if((i2c_ret = i2c_error()) != I2C_OK) break;
+
+			++cbyte;
+		}
 	}
 
 	// Send the STOP Signal
 	I2C1->CTLR1 |= I2C_CTLR1_STOP;
 
-	return ret_sta;
+	return i2c_ret;
 }
 
 
@@ -228,7 +251,7 @@ i2c_err_t i2c_write(const uint8_t addr,    const uint8_t reg,
 {
 	// Wait for the bus to become not busy - return I2C_ERR_TIMEOUT on failure
 	int32_t timeout = I2C_TIMEOUT;
-	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_TIMEOUT;
+	while(I2C1->STAR2 & I2C_STAR2_BUSY) if(--timeout < 0) return I2C_ERR_BUSY;
 
 	// Send a START Signal and wait for it to assert
 	I2C1->CTLR1 |= I2C_CTLR1_START;
@@ -262,6 +285,7 @@ i2c_err_t i2c_write(const uint8_t addr,    const uint8_t reg,
 
 	// Catch some errors
 	i2c_err_t ret_sta = I2C_OK;
+	/*
 	if(I2C1->STAR1 & I2C_STAR1_AF)
 	{
 		I2C1->STAR1 &= ~(I2C_STAR1_AF);
@@ -279,6 +303,7 @@ i2c_err_t i2c_write(const uint8_t addr,    const uint8_t reg,
 		I2C1->STAR1 &= ~(I2C_STAR1_ARLO); 
 		ret_sta = I2C_ERR_ARLO;
 	}
+	*/
 
 	return ret_sta;
 }
