@@ -34,7 +34,7 @@
 #include <stdio.h>
 
 /*** Static Functions ********************************************************/
-/// @breif Checks the I2C Status against a mask value, returns 1 if it matches
+/// @brief Checks the I2C Status against a mask value, returns 1 if it matches
 /// @param Status To match to
 /// @return uint32_t masked status value: 1 if mask and status match
 __attribute__((always_inline))
@@ -44,7 +44,7 @@ static inline uint32_t i2c_status(const uint32_t status_mask)
 	return (status & status_mask) == status_mask; 
 }
 
-/// @breif Gets and returns any error state on the I2C Interface, and resets
+/// @brief Gets and returns any error state on the I2C Interface, and resets
 /// the bit flags
 /// @param none
 /// @return i2c_err_t error value
@@ -63,7 +63,7 @@ static inline i2c_err_t i2c_error(void)
 	return I2C_OK;
 }
 
-/// @breif Checks the current I2C Status, if it does not have an error state,
+/// @brief Checks the current I2C Status, if it does not have an error state,
 /// it defaults to I2C_ERR_BUSY
 /// @param None
 /// @return i2c_err_t error value

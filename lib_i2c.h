@@ -94,22 +94,22 @@ typedef enum {
 
 
 /*** Functions ***************************************************************/
-/// @breif Initialise the I2C Peripheral on the default pins, in Master Mode
+/// @brief Initialise the I2C Peripheral on the default pins, in Master Mode
 /// @param clk_rate that the I2C Bus should use in Hz. Max 400000
 /// @return i2c_err_t, I2C_OK On success
 i2c_err_t i2c_init(const uint32_t clk_rate);
 
-/// @breif Pings a specific I2C Address, and returns a i2c_err_t status
+/// @brief Pings a specific I2C Address, and returns a i2c_err_t status
 /// @param addr I2C Device Address, MUST BE 7 Bit
 /// @return i2c_err_t, I2C_OK if the device responds
 i2c_err_t i2c_ping(const uint8_t addr);
 
-/// @breif Scans through all 7 Bit addresses, prints any that respond
+/// @brief Scans through all 7 Bit addresses, prints any that respond
 /// @param None
 /// @return None
 void i2c_scan(void);
 
-/// @breif reads [len] bytes from [addr]s [reg] register into [buf]
+/// @brief reads [len] bytes from [addr]s [reg] register into [buf]
 /// @param addr, address of I2C Device to Read from, MUST BE 7 Bit
 /// @param buf, buffer to read to
 /// @param len, number of bytes to read
@@ -118,7 +118,7 @@ i2c_err_t i2c_read(const uint8_t addr,    const uint8_t reg,
 				                          uint8_t *buf,
                                           const uint8_t len);
 
-/// @breif writes [len] bytes from [buf], to the [reg] of [addr]
+/// @brief writes [len] bytes from [buf], to the [reg] of [addr]
 /// @param addr, Address of the I2C Device to Write to, MUST BE 7 Bit
 /// @param buf, Buffer to write from
 /// @param len, number of bytes to read
