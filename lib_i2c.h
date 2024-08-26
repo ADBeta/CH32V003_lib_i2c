@@ -104,7 +104,7 @@ i2c_err_t i2c_init(const uint32_t clk_rate);
 /// @return i2c_err_t, I2C_OK if the device responds
 i2c_err_t i2c_ping(const uint8_t addr);
 
-/// @brief Scans through all 7 Bit addresses, prints any that respond
+/// @brief Scans through all 7 Bit addresses
 /// @param callback function pointer called with discovered address and userdata
 /// @param userdata pointer passed to callback
 /// @return None
