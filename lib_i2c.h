@@ -105,9 +105,9 @@ i2c_err_t i2c_init(const uint32_t clk_rate);
 i2c_err_t i2c_ping(const uint8_t addr);
 
 /// @brief Scans through all 7 Bit addresses, prints any that respond
-/// @param None
+/// @param callback function - returns void, takes uint8_t
 /// @return None
-void i2c_scan(void);
+void i2c_scan(void (*callback)(const uint8_t));
 
 /// @brief reads [len] bytes from [addr]s [reg] register into [buf]
 /// @param addr, address of I2C Device to Read from, MUST BE 7 Bit

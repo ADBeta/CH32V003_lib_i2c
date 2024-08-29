@@ -13,6 +13,13 @@
 
 #include <stdio.h>
 
+// I2C Scan Callback example function. Prints the address which responded
+void i2c_scan_callback(const uint8_t addr)
+{
+	printf("Address: 0x%02X Responded.\n", addr);
+}
+
+
 int main() 
 {
 	SystemInit();
@@ -27,8 +34,9 @@ int main()
 	if(i2c_init(I2C_CLK_400KHZ) != I2C_OK) printf("Failed to init the I2C Bus\n");
 
 	// Scan the I2C Bus, prints any devices that respond
-	i2c_scan();
-
+	printf("----Scanning I2C Bus for Devices---\n");
+	i2c_scan(i2c_scan_callback);
+	printf("----Done Scanning----\n\n");
 
 	/*** Example ***/
 	// This example is specifically for the DS3231 I2C RTC Module.
@@ -37,12 +45,12 @@ int main()
 
 	// Write to the -Seconds- Register (Reg 0x00, 0x00 Seconds, one byte)
 	i2c_stat = i2c_write(0x68, 0x00, (uint8_t[]){0x00}, 1);
-	if(i2c_stat != I2C_OK) printf("Error Using the I2C Bus\n");
+	if(i2c_stat != I2C_OK) { printf("Error Using the I2C Bus\n"); return -1; }
 
 	// Example of writing an array to a register.
 	uint8_t array[3] = {0x00, 0x01, 0x02};
 	i2c_stat = i2c_write(0x68, 0x00, array, 3);
-	if(i2c_stat != I2C_OK) printf("Error Using the I2C Bus\n");
+	if(i2c_stat != I2C_OK) { printf("Error Using the I2C Bus\n"); return -1; }
 
 	// Example to read from the I2C Device
 	uint8_t seconds = 0;    // Just Seconds (Read as Hex instead od Decimal)

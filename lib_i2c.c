@@ -31,7 +31,7 @@
 * USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 #include "lib_i2c.h"
-#include <stdio.h>
+#include <stddef.h>
 
 /*** Static Functions ********************************************************/
 /// @brief Checks the I2C Status against a mask value, returns 1 if it matches
@@ -161,17 +161,20 @@ i2c_err_t i2c_ping(const uint8_t addr)
 }
 
 
-void i2c_scan(void)
+void i2c_scan(void (*callback)(const uint8_t))
 {
-	printf("--Scanning I2C Bus--\n");
+	// If the callback function is null, exit
+	if(callback == NULL) return;
+
 	// Scan through every address, getting a ping() response
 	for(uint8_t addr = 0x00; addr < 0x7F; addr++)
 	{
 		// If the address responds, set the return status, and print
 		uint8_t real_addr = addr << 1; // Actual 7bit address being scanned
-		if(i2c_ping(real_addr) == I2C_OK) printf("\tDevice 0x%02X Responded\n", real_addr);
+		//if(i2c_ping(real_addr) == I2C_OK) printf("\tDevice 0x%02X Responded\n", real_addr);
+		if(i2c_ping(real_addr) == I2C_OK) callback(real_addr);
 	}
-	printf("--Done Scanning--\n");
+
 }
 
 

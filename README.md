@@ -15,6 +15,12 @@ on the CH32V003 with the following features:
 * Test on other MCU Variants:
 	* CH32V003 ✔️
 
+* Test frequencies above 400KHz and document/add support
+
+## Thanks
+Thank you [niansa](https://github.com/niansa) for continued help refining the library  
+
+
 If you want to use ANY pins for I2C, see [lib_swi2c](https://github.com/ADBeta/CH32Vxxx_lib_swi2c)
 
 ----
