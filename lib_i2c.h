@@ -10,7 +10,7 @@
 * See GitHub Repo for more information: 
 * https://github.com/ADBeta/CH32V000x-lib_i2c
 *
-* 28 Aug 2024    Version 3.0
+* 29 Aug 2024	Version 3.3
 *
 * Released under the MIT Licence
 * Copyright ADBeta (c) 2024
@@ -39,7 +39,7 @@
 
 #include "ch32v003fun.h"
 
-// TESTED: DEFAULT OK    ALT_1 OK    
+// TESTED: DEFAULT OK	ALT_1 OK
 #define I2C_PINOUT_DEFAULT
 //#define I2C_PINOUT_ALT_1
 //#define I2C_PINOUT_ALT_2
@@ -57,7 +57,7 @@
 
 // Default Pinout
 #ifdef I2C_PINOUT_DEFAULT
-	#define I2C_AFIO_REG    ((uint32_t)0x00000000)
+	#define I2C_AFIO_REG	((uint32_t)0x00000000)
 	#define I2C_PORT_RCC	RCC_APB2Periph_GPIOC
 	#define I2C_PORT		GPIOC
 	#define I2C_PIN_SCL 	2
@@ -66,7 +66,7 @@
 
 // Alternate 1 Pinout
 #ifdef I2C_PINOUT_ALT_1
-	#define I2C_AFIO_REG    ((uint32_t)0x04000002)
+	#define I2C_AFIO_REG	((uint32_t)0x04000002)
 	#define I2C_PORT_RCC	RCC_APB2Periph_GPIOD
 	#define I2C_PORT		GPIOD
 	#define I2C_PIN_SCL 	1
@@ -75,7 +75,7 @@
 
 // Alternate 2 Pinout
 #ifdef I2C_PINOUT_ALT_2
-	#define I2C_AFIO_REG    ((uint32_t)0x00400002)
+	#define I2C_AFIO_REG	((uint32_t)0x00400002)
 	#define I2C_PORT_RCC	RCC_APB2Periph_GPIOC
 	#define I2C_PORT		GPIOC
 	#define I2C_PIN_SCL 	5
@@ -84,12 +84,12 @@
 
 // Error Code Definitons
 typedef enum {
-	I2C_OK      = 0,  // No Error. All OK
-	I2C_ERR_BERR,     // Bus Error
-	I2C_ERR_NACK,     // ACK Bit failed
-	I2C_ERR_ARLO,     // Arbitration Lost
-	I2C_ERR_OVR,      // Overun/underrun condition
-	I2C_ERR_BUSY,     // Bus was busy and timed out
+	I2C_OK	  = 0,  // No Error. All OK
+	I2C_ERR_BERR,	 // Bus Error
+	I2C_ERR_NACK,	 // ACK Bit failed
+	I2C_ERR_ARLO,	 // Arbitration Lost
+	I2C_ERR_OVR,	  // Overun/underrun condition
+	I2C_ERR_BUSY,	 // Bus was busy and timed out
 } i2c_err_t;
 
 
@@ -114,17 +114,17 @@ void i2c_scan(void);
 /// @param buf, buffer to read to
 /// @param len, number of bytes to read
 /// @return 12c_err_t. I2C_OK on Success
-i2c_err_t i2c_read(const uint8_t addr,    const uint8_t reg,
-				                          uint8_t *buf,
-                                          const uint8_t len);
+i2c_err_t i2c_read(const uint8_t addr,	const uint8_t reg,
+										uint8_t *buf,
+										const uint8_t len);
 
 /// @brief writes [len] bytes from [buf], to the [reg] of [addr]
 /// @param addr, Address of the I2C Device to Write to, MUST BE 7 Bit
 /// @param buf, Buffer to write from
 /// @param len, number of bytes to read
 /// @return i2c_err_t. I2C_OK On Success.
-i2c_err_t i2c_write(const uint8_t addr,    const uint8_t reg,
-					                       const uint8_t *buf,
-                                           const uint8_t len);
+i2c_err_t i2c_write(const uint8_t addr,	const uint8_t reg,
+										const uint8_t *buf,
+										const uint8_t len);
 
 #endif

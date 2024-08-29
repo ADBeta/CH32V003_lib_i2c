@@ -175,9 +175,9 @@ void i2c_scan(void)
 }
 
 
-i2c_err_t i2c_read(const uint8_t addr,    const uint8_t reg,
-				                          uint8_t *buf,
-                                          const uint8_t len)
+i2c_err_t i2c_read(const uint8_t addr,		const uint8_t reg,
+											uint8_t *buf,
+											const uint8_t len)
 {
 	i2c_err_t i2c_ret = I2C_OK;
 
@@ -246,9 +246,9 @@ i2c_err_t i2c_read(const uint8_t addr,    const uint8_t reg,
 }
 
 
-i2c_err_t i2c_write(const uint8_t addr,    const uint8_t reg,
-					                       const uint8_t *buf,
-                                           const uint8_t len)
+i2c_err_t i2c_write(const uint8_t addr,		const uint8_t reg,
+											const uint8_t *buf,
+											const uint8_t len)
 {
 	i2c_err_t i2c_ret = I2C_OK;
 
