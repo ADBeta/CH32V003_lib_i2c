@@ -31,7 +31,8 @@ int main()
 	// I2C_CLK_50KHZ
 	// I2C_CLK_100KHZ
 	// I2C_CLK_400KHZ
-	if(i2c_init(I2C_CLK_400KHZ) != I2C_OK) printf("Failed to init the I2C Bus\n");
+	// TODO: Test max freq 2 or 1 MHz?????
+	if(i2c_init(2000000) != I2C_OK) printf("Failed to init the I2C Bus\n");
 
 	// Scan the I2C Bus, prints any devices that respond
 	printf("----Scanning I2C Bus for Devices---\n");
