@@ -13,6 +13,8 @@
 
 #include <stdio.h>
 
+#define I2C_ADDR 0x68
+
 // I2C Scan Callback example function. Prints the address which responded
 void i2c_scan_callback(const uint8_t addr)
 {
@@ -27,12 +29,9 @@ int main()
 	// Initialise the I2C Interface on the selected pins, at the specified Hz.
 	// Enter a clock speed in Hz (Weirdness happens below 10,000), or use one
 	// of the pre-defined clock speeds:
-	// I2C_CLK_10KHZ
-	// I2C_CLK_50KHZ
-	// I2C_CLK_100KHZ
-	// I2C_CLK_400KHZ
-	// TODO: Test max freq 2 or 1 MHz?????
-	if(i2c_init(2000000) != I2C_OK) printf("Failed to init the I2C Bus\n");
+	// I2C_CLK_10KHZ    I2C_CLK_50KHZ    I2C_CLK_100KHZ    I2C_CLK_400KHZ
+	// I2C_CLK_500KHZ   I2C_CLK_600KHZ   I2C_CLK_750KHZ    I2C_CLK_1MHZ
+	if(i2c_init(I2C_CLK_400KHZ) != I2C_OK) printf("Failed to init the I2C Bus\n");
 
 	// Scan the I2C Bus, prints any devices that respond
 	printf("----Scanning I2C Bus for Devices---\n");
@@ -45,12 +44,12 @@ int main()
 	i2c_err_t i2c_stat;
 
 	// Write to the -Seconds- Register (Reg 0x00, 0x00 Seconds, one byte)
-	i2c_stat = i2c_write(0x68, 0x00, (uint8_t[]){0x00}, 1);
+	i2c_stat = i2c_write(I2C_ADDR, 0x00, (uint8_t[]){0x00}, 1);
 	if(i2c_stat != I2C_OK) { printf("Error Using the I2C Bus\n"); return -1; }
 
 	// Example of writing an array to a register.
 	uint8_t array[3] = {0x00, 0x01, 0x02};
-	i2c_stat = i2c_write(0x68, 0x00, array, 3);
+	i2c_stat = i2c_write(I2C_ADDR, 0x00, array, 3);
 	if(i2c_stat != I2C_OK) { printf("Error Using the I2C Bus\n"); return -1; }
 
 	// Example to read from the I2C Device
@@ -61,14 +60,14 @@ int main()
 	while(1)
 	{
 		// Example reading just one byte
-		i2c_stat = i2c_read(0x68, 0x00, &seconds, 1);
+		i2c_stat = i2c_read(I2C_ADDR, 0x00, &seconds, 1);
 		if(i2c_stat != I2C_OK) printf("Error Using the I2C Bus\n");
 		// Print Seconds as a single hex byte
 		printf("Seconds: %02X\n", seconds);
 
 		
 		// Example reading multiple bytes
-		i2c_stat = i2c_read(0x68, 0x00, time, 3);
+		i2c_stat = i2c_read(I2C_ADDR, 0x00, time, 3);
 		if(i2c_stat != I2C_OK) printf("Error Using the I2C Bus\n");
 		// Print Time as Hrs Min Sec
 		printf("Time: %02X:%02X:%02X\n\n", time[2], time[1], time[0]);

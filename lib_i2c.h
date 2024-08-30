@@ -50,6 +50,10 @@
 #define I2C_CLK_50KHZ  50000
 #define I2C_CLK_100KHZ 100000
 #define I2C_CLK_400KHZ 400000
+#define I2C_CLK_500KHZ 500000
+#define I2C_CLK_600KHZ 600000
+#define I2C_CLK_750KHZ 750000
+#define I2C_CLK_1MHZ   1000000
 
 // Hardware CLK Prerate and timeout
 #define I2C_PRERATE 1000000

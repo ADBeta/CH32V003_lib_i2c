@@ -7,6 +7,7 @@ on the CH32V003 with the following features:
 * Support for All 3 Alternative Pinouts
 * Support 7-bit Addresses (7-bit aligned, eg `0bx1101000 - 0x68`)
 * Support 8-bit Registers
+* Up to 1MHz Bus Frequency has been tested. Can be set higher.
 * Easy to use I2C Error Status'
 * Funcion to Scan the Interface for devices
 * Master Mode Only
@@ -15,11 +16,8 @@ on the CH32V003 with the following features:
 * Test on other MCU Variants:
 	* CH32V003 ✔️
 
-* Test frequencies above 400KHz and document/add support
-
 ## Thanks
 Thank you [niansa](https://github.com/niansa) for continued help refining the library  
-
 
 If you want to use ANY pins for I2C, see [lib_swi2c](https://github.com/ADBeta/CH32Vxxx_lib_swi2c)
 

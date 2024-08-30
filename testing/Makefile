@@ -31,7 +31,7 @@ FILES_TO_COMPILE := $(MCU_C) $(TARGET).c $(LIB_SRC)
 # Specify the MCU LD, for the CH32V003
 TARGET_MCU_LD:=0
 
-# Architecutre Compile Flags. Change these if using a different Chip 
+# Architecutre Compile Flags. Change these if using a different Chip
 CFLAGS_ARCH += -march=rv32ec -mabi=ilp32e -DCH32V003=1
 
 # Compiler flags, warnings, dirs etc
@@ -56,11 +56,11 @@ build: $(TARGET).bin
 # Create the LD file needed - requires the build folder
 $(GENERATED_LD_FILE):
 	$(PREFIX)-gcc -E -P -x c -DTARGET_MCU=$(TARGET_MCU) -DMCU_PACKAGE=$(MCU_PACKAGE) -DTARGET_MCU_LD=$(TARGET_MCU_LD) $(TOOLKIT_DIR)/ch32v003fun.ld > $(GENERATED_LD_FILE)
-	
+
 # Compile the .elf file - requires the compiled ld file, .c files and other depends
 $(TARGET).elf: $(FILES_TO_COMPILE) $(GENERATED_LD_FILE) $(EXTRA_ELF_DEPENDENCIES)
 	$(PREFIX)-gcc -o $@ $(FILES_TO_COMPILE) $(CFLAGS) $(LDFLAGS)
-	
+
 # Create the binary file and hex from the .elf file
 $(TARGET).bin: $(TARGET).elf
 	$(PREFIX)-size $(TARGET).elf
@@ -71,7 +71,7 @@ $(TARGET).bin: $(TARGET).elf
 
 terminal: monitor
 
-gdbserver : 
+gdbserver :
 	-$(MINICHLINK)/minichlink -baG
 
 clangd :
