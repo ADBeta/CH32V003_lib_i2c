@@ -4,9 +4,9 @@ i2c-test.elf:     file format elf32-littleriscv
 SYMBOL TABLE:
 00000000 l    d  .init	00000000 .init
 000000a0 l    d  .text	00000000 .text
-00000de4 l    d  .fini	00000000 .fini
+00000ddc l    d  .fini	00000000 .fini
 20000000 l    d  .dalign	00000000 .dalign
-00000de4 l    d  .dlalign	00000000 .dlalign
+00000ddc l    d  .dlalign	00000000 .dlalign
 20000000 l    d  .data	00000000 .data
 20000000 l    d  .bss	00000000 .bss
 00000000 l    d  .riscv.attributes	00000000 .riscv.attributes
@@ -52,8 +52,9 @@ SYMBOL TABLE:
 20000000 g       .bss	00000000 _ebss
 000007ce g     F .text	00000002 DMA1_Channel7_IRQHandler
 000000d4 g     F .text	00000008 .hidden __umodsi3
+000023e6  w      .debug_info	00000000 .hidden lib_i2c.c.f09bf034
 000007ce g     F .text	00000002 I2C1_EV_IRQHandler
-00002197  w      .debug_info	00000000 .hidden i2c_test.c.6b0efda3
+0000217b  w      .debug_info	00000000 .hidden i2c_test.c.6b0efda3
 000007ce g     F .text	00000002 DMA1_Channel6_IRQHandler
 000007ce g     F .text	00000002 RCC_IRQHandler
 000007ce g     F .text	00000002 TIM1_TRG_COM_IRQHandler
@@ -62,22 +63,21 @@ SYMBOL TABLE:
 20000000 g       .dalign	00000000 _data_vma
 000007d0 g     F .text	0000000e NMI_RCC_CSS_IRQHandler
 000009d6 g     F .text	00000012 memset
-00000a92 g     F .text	00000298 main
+00000a92 g     F .text	00000290 main
 000007ce g     F .text	00000002 DMA1_Channel5_IRQHandler
 000000a0 g     F .text	00000058 .hidden __divsi3
 00000a30 g     F .text	00000062 SystemInit
 00000000 g       .init	00000000 _sinit
 000007ce g     F .text	00000002 DMA1_Channel3_IRQHandler
 000007ce g     F .text	00000002 TIM1_UP_IRQHandler
-000013c1  w      .debug_info	00000000 .hidden ch32v003fun.c.75419276
+000013a5  w      .debug_info	00000000 .hidden ch32v003fun.c.75419276
 000007ce g     F .text	00000002 WWDG_IRQHandler
 000007ce g     F .text	00000002 TIM2_IRQHandler
 20000800 g       .text	00000000 _eusrstack
 000007ce g     F .text	00000002 SW_Handler
 000007ce g     F .text	00000002 TIM1_BRK_IRQHandler
-00002402  w      .debug_info	00000000 .hidden lib_i2c.c.ef32f279
 20000000 g       .data	00000000 _edata
-00000de4 g       .dlalign	00000000 _data_lma
+00000ddc g       .dlalign	00000000 _data_lma
 000000f8 g     F .text	00000024 .hidden __modsi3
 000007ce g     F .text	00000002 DMA1_Channel2_IRQHandler
 0000074e g     F .text	00000080 handle_reset

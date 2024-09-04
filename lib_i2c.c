@@ -169,12 +169,9 @@ void i2c_scan(void (*callback)(const uint8_t))
 	// Scan through every address, getting a ping() response
 	for(uint8_t addr = 0x00; addr < 0x7F; addr++)
 	{
-		// If the address responds, set the return status, and print
-		uint8_t real_addr = addr << 1; // Actual 7bit address being scanned
-		//if(i2c_ping(real_addr) == I2C_OK) printf("\tDevice 0x%02X Responded\n", real_addr);
-		if(i2c_ping(real_addr) == I2C_OK) callback(real_addr);
+		// If the address responds, call the callback function
+		if(i2c_ping(addr) == I2C_OK) callback(addr);
 	}
-
 }
 
 
