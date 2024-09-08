@@ -33,6 +33,11 @@ int main()
 	// I2C_CLK_500KHZ   I2C_CLK_600KHZ   I2C_CLK_750KHZ    I2C_CLK_1MHZ
 	if(i2c_init(I2C_CLK_400KHZ) != I2C_OK) printf("Failed to init the I2C Bus\n");
 
+	// Initialising I2C causes the pins to transition from LOW to HIGH.
+	// Wait 100ms to allow the I2C Device to timeout and ignore the transition.
+	// Otherwise, an extra 1-bit will be added to the next transmission
+	Delay_Ms(100);
+
 	// Scan the I2C Bus, prints any devices that respond
 	printf("----Scanning I2C Bus for Devices---\n");
 	i2c_scan(i2c_scan_callback);
