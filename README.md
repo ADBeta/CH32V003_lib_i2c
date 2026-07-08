@@ -11,11 +11,14 @@ on the CH32V003 with the following features:
 * Funcion to Scan the Interface for devices
 * Master Mode Only
 
-
 ## Links
 [CNLohr's ch32fun](https://github.com/cnlohr/ch32fun)
 [PlatformIO Template](https://github.com/mattybigback/CH32V003_lib_i2c)
 
+## Usage
+
+Copy the content of the github repository under the ``ch32fun/examples`` subdirectory
+and ``make`` to compile from ``ch32fun/examples\CH32V003_lib_i2c``.
 
 ## Changelog
 * `v5.5` - Adapted funconfig.h to modern ch32fun. Slight change to demo. Tested on CH32V006
